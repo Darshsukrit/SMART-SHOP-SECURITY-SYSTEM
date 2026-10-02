@@ -858,15 +858,16 @@
         // Circuit view physical wires
         if (elements.wirePhysicalAlarm) {
             if (isAlarm) {
-                elements.wirePhysicalAlarm.className = "phys-wire wire-red-active";
+                elements.wirePhysicalAlarm.setAttribute("class", "phys-wire wire-red-active");
                 if (elements.physPulseBuzzerWire) elements.physPulseBuzzerWire.style.display = "block";
                 if (elements.physPulsePhoneWire) elements.physPulsePhoneWire.style.display = "block";
             } else {
-                elements.wirePhysicalAlarm.className = "phys-wire wire-red-inactive";
+                elements.wirePhysicalAlarm.setAttribute("class", "phys-wire wire-red-inactive");
                 if (elements.physPulseBuzzerWire) elements.physPulseBuzzerWire.style.display = "none";
                 if (elements.physPulsePhoneWire) elements.physPulsePhoneWire.style.display = "none";
             }
         }
+    }
 
     /**
      * Renders detailed specification and live hardware metrics for the inspected component into the bottom full-width panel.
