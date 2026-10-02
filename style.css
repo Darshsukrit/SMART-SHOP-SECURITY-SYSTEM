@@ -72,6 +72,8 @@
 
 html, body {
     height: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
     font-family: var(--font-sans);
     font-size: 15px;
     line-height: 1.5;
@@ -86,6 +88,7 @@ button {
     border: none;
     background: none;
     outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* --- 3. App Container Layout --- */
@@ -93,6 +96,29 @@ button {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    max-width: 100%;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Mobile Sidebar Backdrop Overlay */
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-normal);
+}
+
+.sidebar-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 /* --- 4. Top Header --- */
@@ -1575,14 +1601,18 @@ button {
 }
 
 .hw-view-btn {
-    padding: 6px 14px;
-    font-size: 0.8rem;
+    padding: 7px 16px;
+    font-size: 0.82rem;
     font-weight: 600;
     border-radius: var(--radius-sm);
     background-color: var(--color-surface);
     color: var(--color-text-muted);
     border: 1px solid var(--color-border);
     transition: all var(--transition-fast);
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hw-view-btn:hover {
@@ -1621,6 +1651,8 @@ button {
     gap: 20px;
     margin-bottom: 20px;
     align-items: start;
+    width: 100%;
+    max-width: 100%;
 }
 
 /* Large Visual Canvas Container */
@@ -1631,22 +1663,26 @@ button {
     position: relative;
     overflow: hidden;
     box-shadow: var(--shadow-lg);
-    min-height: 540px;
+    min-height: 520px;
     display: flex;
     flex-direction: column;
+    width: 100%;
+    max-width: 100%;
 }
 
 .hw-board-banner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 18px;
+    padding: 10px 16px;
     background: rgba(15, 23, 42, 0.95);
     border-bottom: 1px solid #1e293b;
     color: #f8fafc;
     font-family: var(--font-mono);
     font-size: 0.78rem;
     z-index: 10;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .hw-banner-left {
@@ -1661,6 +1697,7 @@ button {
     border-radius: 50%;
     background-color: #10b981;
     box-shadow: 0 0 8px #10b981;
+    flex-shrink: 0;
 }
 
 .hw-board-title {
@@ -1683,7 +1720,7 @@ button {
     display: none;
     position: relative;
     width: 100%;
-    height: 470px;
+    height: 480px;
     flex: 1;
 }
 
@@ -1701,6 +1738,8 @@ button {
         linear-gradient(to right, rgba(30, 41, 59, 0.15) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(30, 41, 59, 0.15) 1px, transparent 1px);
     background-size: 24px 24px, 48px 48px, 48px 48px;
+    position: relative;
+    width: 100%;
 }
 
 .hw-system-svg {
@@ -1752,6 +1791,7 @@ button {
     transition: all var(--transition-fast);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(4px);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .sys-block-card:hover {
@@ -1826,11 +1866,102 @@ button {
    ========================================================================== */
 #hwCircuitViewContainer {
     background-color: #0d1527;
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Circuit Zoom / Pan Bar */
+.hw-circuit-zoom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: #0f172a;
+    border-bottom: 1px solid #1e293b;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    flex-wrap: wrap;
+    gap: 8px;
+    z-index: 10;
+}
+
+.zoom-left-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.zoom-label {
+    font-weight: 600;
+    color: #cbd5e1;
+    font-size: 0.76rem;
+}
+
+.zoom-btn-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-zoom {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    background-color: #1e293b;
+    color: #38bdf8;
+    border: 1px solid #334155;
+    min-height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+}
+
+.btn-zoom:hover {
+    background-color: #334155;
+    color: #ffffff;
+}
+
+.zoom-level-text {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: #cbd5e1;
+    padding: 0 4px;
+    min-width: 38px;
+    text-align: center;
+}
+
+.circuit-touch-hint {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-family: var(--font-mono);
+}
+
+/* Circuit Viewport & Inner Canvas */
+.hw-circuit-viewport {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    background-color: #0d1527;
     background-image: 
         radial-gradient(#1e3a8a 1.5px, transparent 1.5px),
         linear-gradient(to right, rgba(30, 58, 138, 0.15) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(30, 58, 138, 0.15) 1px, transparent 1px);
     background-size: 16px 16px, 32px 32px, 32px 32px;
+}
+
+.hw-circuit-canvas-inner {
+    position: relative;
+    width: 900px;
+    height: 480px;
+    transform-origin: top left;
+    transition: transform 0.15s ease-out;
 }
 
 .hw-circuit-svg {
@@ -1887,6 +2018,7 @@ button {
     cursor: pointer;
     transition: all var(--transition-fast);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+    -webkit-tap-highlight-color: transparent;
 }
 
 .phys-module-card:hover {
@@ -1959,7 +2091,6 @@ button {
 .pin-blue { background-color: #38bdf8; border: 1px solid #7dd3fc; }
 .pin-gray { background-color: #64748b; border: 1px solid #94a3b8; }
 
-/* Specific Physical Module Stylings */
 /* ESP32 Physical PCB */
 .phys-esp32-card {
     width: 220px;
@@ -2091,13 +2222,13 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    padding: 8px 14px;
+    padding: 10px 16px;
     background: rgba(15, 23, 42, 0.95);
     border-top: 1px solid #1e293b;
     font-size: 0.72rem;
     color: #94a3b8;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
     z-index: 10;
 }
 
@@ -2111,6 +2242,7 @@ button {
     width: 16px;
     height: 3.5px;
     border-radius: 2px;
+    flex-shrink: 0;
 }
 
 .legend-line-sensor { background-color: #10b981; }
@@ -2127,12 +2259,16 @@ button {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    width: 100%;
 }
 
 .hw-sidebar-controls-card,
 .hw-sidebar-status-card {
     background: #ffffff;
-    padding: 16px;
+    padding: 18px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
 }
 
 .hw-sidebar-controls-card .card-title-bar,
@@ -2161,7 +2297,7 @@ button {
     align-items: center;
     justify-content: space-between;
     font-size: 0.78rem;
-    padding: 5px 8px;
+    padding: 6px 10px;
     background-color: var(--color-bg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
@@ -2185,6 +2321,10 @@ button {
     background: #ffffff;
     padding: 22px 24px;
     margin-top: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    width: 100%;
 }
 
 .hw-info-3col-grid {
@@ -2223,11 +2363,14 @@ button {
     color: var(--color-text-muted);
     border-bottom: 1px dashed var(--color-border);
     padding-bottom: 4px;
+    gap: 8px;
 }
 
 .hw-spec-list strong {
     color: var(--color-text-main);
     font-family: var(--font-mono);
+    text-align: right;
+    word-break: break-word;
 }
 
 .hw-resp-list {
@@ -2251,6 +2394,8 @@ button {
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .footer-center strong {
@@ -2263,12 +2408,19 @@ button {
     font-family: var(--font-mono);
 }
 
-/* --- 17. Responsive Breakpoints --- */
+/* ==========================================================================
+   17. COMPREHENSIVE RESPONSIVE BREAKPOINTS (TABLET, MOBILE, MINI)
+   ========================================================================== */
 
-/* Tablet (max-width: 1024px) */
+/* --- Tablet Devices (max-width: 1024px) --- */
 @media (max-width: 1024px) {
+    .app-main {
+        padding: 20px;
+    }
+
     .status-cards-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
     }
     
     .dashboard-split-grid,
@@ -2278,6 +2430,7 @@ button {
 
     .hw-info-3col-grid {
         grid-template-columns: 1fr 1fr;
+        gap: 20px;
     }
 
     .door-status-grid,
@@ -2286,72 +2439,337 @@ button {
     }
 }
 
-/* Mobile (max-width: 768px) */
+/* --- Mobile / Small Tablet Devices (max-width: 768px) --- */
 @media (max-width: 768px) {
-    .mobile-menu-btn {
-        display: block;
+    :root {
+        --header-height: 60px;
     }
 
     .app-header {
-        padding: 0 16px;
+        padding: 0 12px;
+        height: var(--header-height);
+    }
+
+    .header-left {
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        padding: 8px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+    }
+
+    .brand-badge {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+    }
+
+    .brand-title {
+        font-size: clamp(0.85rem, 3.8vw, 1.05rem);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .brand-subtitle,
-    .simulation-tag {
-        display: none;
+    .simulation-tag,
+    .clock-date {
+        display: none !important;
     }
 
+    .header-right {
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .header-clock-widget {
+        padding: 4px 8px;
+    }
+
+    .clock-time {
+        font-size: 0.8rem;
+    }
+
+    .status-pill {
+        padding: 5px 9px;
+        font-size: 0.72rem;
+    }
+
+    /* Mobile Drawer */
     .app-sidebar {
         position: fixed;
-        top: var(--header-height);
-        left: -100%;
+        top: 0;
+        left: -290px;
         bottom: 0;
-        z-index: 40;
-        width: 260px;
-        transition: left 0.3s ease;
-        box-shadow: 4px 0 16px rgba(0,0,0,0.4);
+        width: 275px;
+        height: 100vh;
+        z-index: 100;
+        background-color: var(--color-primary-dark);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 6px 0 25px rgba(0, 0, 0, 0.6);
+        overflow-y: auto;
+        padding: 24px 14px 20px;
     }
 
     .app-sidebar.mobile-open {
         left: 0;
     }
 
+    .nav-item {
+        min-height: 44px;
+        font-size: 0.92rem;
+        padding: 12px 14px;
+    }
+
     .app-main {
+        padding: 14px 12px;
+        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Dashboard Mobile Enhancements */
+    .section-header {
+        margin-bottom: 16px;
+    }
+
+    .section-title {
+        font-size: 1.35rem;
+    }
+
+    .security-banner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
         padding: 16px;
+    }
+
+    .banner-action {
+        width: 100%;
+    }
+
+    .btn-danger-banner {
+        width: 100%;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .status-cards-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .btn-control {
+        min-height: 44px;
+        font-size: 0.85rem;
     }
 
     .demo-buttons-grid,
     .hw-actions-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
     }
 
     .door-diagram-container {
         grid-template-columns: 1fr;
-        padding: 20px;
+        padding: 16px;
+        gap: 18px;
     }
 
-    .system-status-grid {
-        grid-template-columns: 1fr;
+    .door-actions-toolbar {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .cctv-action-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .cctv-action-row .btn-control {
+        width: 100%;
+    }
+
+    /* System View on Mobile: Clean Vertical Signal-Flow Layout */
+    #hwSystemViewContainer {
+        height: auto !important;
+        min-height: auto !important;
+        padding: 14px 10px !important;
+        overflow: visible !important;
+    }
+
+    .hw-system-svg {
+        display: none !important;
+    }
+
+    .sys-blocks-layer {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    .sys-block-card {
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        left: auto !important;
+        top: auto !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .sys-block-card::after {
+        content: "↓ Logical Signal Flow";
+        display: block;
+        text-align: center;
+        font-size: 0.68rem;
+        color: #38bdf8;
+        font-family: var(--font-mono);
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px dashed rgba(56, 189, 248, 0.25);
+    }
+
+    .sys-block-card:last-child::after,
+    .sys-hub-card::after {
+        display: none;
+    }
+
+    /* Circuit View on Mobile */
+    .hw-circuit-viewport {
+        height: 420px;
+    }
+
+    .hw-board-legend {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 10px;
     }
 
     .hw-info-3col-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
     }
 
-    .hw-view-container {
-        overflow-x: auto;
+    .hw-info-fullwidth-card {
+        padding: 16px;
+    }
+
+    .system-status-grid {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+
+    .event-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .filter-btn {
+        min-height: 36px;
+        padding: 6px 10px;
+        font-size: 0.78rem;
     }
 
     .app-footer {
         flex-direction: column;
         height: auto;
-        padding: 12px 16px;
+        padding: 12px 14px;
         gap: 6px;
         text-align: center;
+    }
+}
+
+/* --- Extra Small Mobile Devices (max-width: 480px) --- */
+@media (max-width: 480px) {
+    .status-pill-text {
+        display: none;
+    }
+
+    .status-pill {
+        padding: 6px 8px;
+    }
+
+    .header-clock-widget {
+        padding: 3px 6px;
+    }
+
+    .clock-time {
+        font-size: 0.75rem;
+    }
+
+    .hw-view-controls {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+    }
+
+    .hw-view-btn {
+        width: 100%;
+        padding: 6px 8px;
+        font-size: 0.76rem;
+    }
+
+    .hw-btn-accent {
+        grid-column: span 2;
+    }
+
+    .cctv-meta-grid,
+    .door-status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hw-board-legend {
+        grid-template-columns: 1fr;
+    }
+
+    .hw-circuit-zoom-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+    }
+
+    .zoom-left-group {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .circuit-touch-hint {
+        text-align: center;
+    }
+}
+
+/* --- Super Small Mobile Devices (max-width: 360px) --- */
+@media (max-width: 360px) {
+    .demo-buttons-grid,
+    .hw-actions-grid,
+    .door-actions-toolbar {
+        grid-template-columns: 1fr;
+    }
+
+    .hw-btn-span-2 {
+        grid-column: span 1;
     }
 }
 

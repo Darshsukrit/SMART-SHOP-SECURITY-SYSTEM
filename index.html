@@ -57,6 +57,9 @@
              MAIN APPLICATION LAYOUT (SIDEBAR + CONTENT)
              ========================================== -->
         <div class="app-body">
+            <!-- Mobile Sidebar Backdrop Overlay -->
+            <div class="sidebar-backdrop" id="sidebarBackdrop" aria-hidden="true"></div>
+
             <!-- Sidebar Navigation -->
             <aside class="app-sidebar" id="appSidebar">
                 <nav class="sidebar-nav">
@@ -740,7 +743,24 @@
                                  Bench-top prototype with physical modules, pins & visible wires
                                  ============================================== -->
                             <div class="hw-view-container" id="hwCircuitViewContainer">
-                                <svg class="hw-circuit-svg" id="hwCircuitSvg" viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet">
+                                <!-- Mobile & Desktop Circuit Zoom / Pan Bar -->
+                                <div class="hw-circuit-zoom-bar" id="hwCircuitZoomBar">
+                                    <div class="zoom-left-group">
+                                        <span class="zoom-label">Circuit Workspace:</span>
+                                        <div class="zoom-btn-group">
+                                            <button class="btn-zoom" id="btnCircuitZoomOut" title="Zoom Out" aria-label="Zoom Out">🔍−</button>
+                                            <button class="btn-zoom" id="btnCircuitZoomReset" title="Reset Zoom" aria-label="Reset Zoom">↺ 100%</button>
+                                            <button class="btn-zoom" id="btnCircuitZoomIn" title="Zoom In" aria-label="Zoom In">🔍+</button>
+                                            <span class="zoom-level-text" id="circuitZoomLevelText">100%</span>
+                                        </div>
+                                    </div>
+                                    <span class="circuit-touch-hint">👈 Swipe / Pan on Mobile to explore 👉</span>
+                                </div>
+
+                                <!-- Internal Scrollable/Zoomable Viewport -->
+                                <div class="hw-circuit-viewport" id="hwCircuitViewport">
+                                    <div class="hw-circuit-canvas-inner" id="hwCircuitCanvasInner">
+                                        <svg class="hw-circuit-svg" id="hwCircuitSvg" viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet">
                                     <defs>
                                         <!-- Terminal Pin Dots Marker -->
                                         <pattern id="breadboardHoles" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
@@ -959,6 +979,8 @@
                                         </div>
                                     </div>
 
+                                </div>
+                                    </div>
                                 </div>
                             </div>
 

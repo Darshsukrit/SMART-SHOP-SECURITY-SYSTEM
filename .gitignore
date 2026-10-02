@@ -15,6 +15,8 @@ desktop.ini
 # Temporary and Scratch Files
 *.tmp
 *.log
+*.mp4
+*.webp
 .gemini/
 .agents/
 scratch/

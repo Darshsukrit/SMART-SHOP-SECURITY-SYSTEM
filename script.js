@@ -60,6 +60,7 @@
     const elements = {
         // Navigation & Layout
         sidebarNav: document.getElementById("appSidebar"),
+        sidebarBackdrop: document.getElementById("sidebarBackdrop"),
         mobileMenuBtn: document.getElementById("mobileMenuBtn"),
         navButtons: document.querySelectorAll(".nav-item"),
         contentSections: document.querySelectorAll(".content-section"),
@@ -140,6 +141,12 @@
         hwCanvasContainer: document.getElementById("hwCanvasContainer"),
         hwSystemViewContainer: document.getElementById("hwSystemViewContainer"),
         hwCircuitViewContainer: document.getElementById("hwCircuitViewContainer"),
+        hwCircuitViewport: document.getElementById("hwCircuitViewport"),
+        hwCircuitCanvasInner: document.getElementById("hwCircuitCanvasInner"),
+        btnCircuitZoomOut: document.getElementById("btnCircuitZoomOut"),
+        btnCircuitZoomReset: document.getElementById("btnCircuitZoomReset"),
+        btnCircuitZoomIn: document.getElementById("btnCircuitZoomIn"),
+        circuitZoomLevelText: document.getElementById("circuitZoomLevelText"),
         hwBoardModeTitle: document.getElementById("hwBoardModeTitle"),
         hwFlowStateTag: document.getElementById("hwFlowStateTag"),
         hwCanvasLed: document.getElementById("hwCanvasLed"),
@@ -932,6 +939,37 @@
     }
 
     /**
+     * Controls Circuit Workspace Zoom level (0.6x to 1.4x)
+     */
+    let currentCircuitZoom = 1.0;
+    function setCircuitZoom(zoomLevel) {
+        currentCircuitZoom = Math.min(Math.max(zoomLevel, 0.6), 1.4);
+        const percent = Math.round(currentCircuitZoom * 100);
+        if (elements.circuitZoomLevelText) {
+            elements.circuitZoomLevelText.textContent = `${percent}%`;
+        }
+        if (elements.hwCircuitCanvasInner) {
+            elements.hwCircuitCanvasInner.style.transform = `scale(${currentCircuitZoom})`;
+            elements.hwCircuitCanvasInner.style.transformOrigin = "top left";
+        }
+    }
+
+    function zoomInCircuit() {
+        setCircuitZoom(currentCircuitZoom + 0.15);
+    }
+
+    function zoomOutCircuit() {
+        setCircuitZoom(currentCircuitZoom - 0.15);
+    }
+
+    function resetCircuitZoom() {
+        setCircuitZoom(1.0);
+        if (elements.hwCircuitViewport) {
+            elements.hwCircuitViewport.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+        }
+    }
+
+    /**
      * Runs an automated 15-second visual demonstration flow of the physical hardware & security sequence.
      */
     let autoFlowTimer = null;
@@ -1486,9 +1524,19 @@
         });
 
         // Close mobile sidebar if open
-        if (elements.sidebarNav) {
-            elements.sidebarNav.classList.remove("mobile-open");
-        }
+        closeMobileSidebar();
+    }
+
+    function openMobileSidebar() {
+        if (elements.sidebarNav) elements.sidebarNav.classList.add("mobile-open");
+        if (elements.sidebarBackdrop) elements.sidebarBackdrop.classList.add("active");
+        document.body.style.overflow = "hidden"; // Prevent background scroll when drawer is open
+    }
+
+    function closeMobileSidebar() {
+        if (elements.sidebarNav) elements.sidebarNav.classList.remove("mobile-open");
+        if (elements.sidebarBackdrop) elements.sidebarBackdrop.classList.remove("active");
+        document.body.style.overflow = "";
     }
 
     // ------------------------------------------------------------------------
@@ -1504,12 +1552,27 @@
             });
         });
 
-        // Mobile menu toggle
-        if (elements.mobileMenuBtn && elements.sidebarNav) {
+        // Mobile menu toggle & drawer backdrop
+        if (elements.mobileMenuBtn) {
             elements.mobileMenuBtn.addEventListener("click", () => {
-                elements.sidebarNav.classList.toggle("mobile-open");
+                if (elements.sidebarNav && elements.sidebarNav.classList.contains("mobile-open")) {
+                    closeMobileSidebar();
+                } else {
+                    openMobileSidebar();
+                }
             });
         }
+
+        if (elements.sidebarBackdrop) {
+            elements.sidebarBackdrop.addEventListener("click", closeMobileSidebar);
+        }
+
+        // Close mobile drawer on Escape key
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" || e.key === "Esc") {
+                closeMobileSidebar();
+            }
+        });
 
         // Dashboard quick link to full events log
         if (elements.btnViewAllEvents) {
@@ -1549,9 +1612,15 @@
             elements.btnHwResetView.addEventListener("click", () => {
                 stopAutoFlowDemo();
                 setHardwareViewMode("system");
+                resetCircuitZoom();
                 renderHardwareInspector("esp32");
             });
         }
+
+        // Circuit Workspace Zoom Buttons
+        if (elements.btnCircuitZoomIn) elements.btnCircuitZoomIn.addEventListener("click", zoomInCircuit);
+        if (elements.btnCircuitZoomOut) elements.btnCircuitZoomOut.addEventListener("click", zoomOutCircuit);
+        if (elements.btnCircuitZoomReset) elements.btnCircuitZoomReset.addEventListener("click", resetCircuitZoom);
 
         // Hardware Component Node Click Inspection (Both System View Blocks & Circuit View Physical Modules)
         document.querySelectorAll(".sys-block-card, .phys-module-card").forEach(nodeCard => {
