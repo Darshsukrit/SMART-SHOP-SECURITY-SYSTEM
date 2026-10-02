@@ -601,7 +601,7 @@
                             <div class="hw-view-container active" id="hwSystemViewContainer">
                                 <svg class="hw-system-svg" id="hwSystemSvg" viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet">
                                     <defs>
-                                        <!-- Arrow Markers for Logical Data Flow -->
+                                        <!-- Arrow Markers for Logical Architecture Flow -->
                                         <marker id="sysArrowGreen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                                             <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#10b981" />
                                         </marker>
@@ -611,129 +611,123 @@
                                         <marker id="sysArrowBlue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                                             <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#38bdf8" />
                                         </marker>
-                                        <marker id="sysArrowAmber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                                            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#f59e0b" />
-                                        </marker>
                                     </defs>
 
-                                    <!-- CCTV Stream (Isolated top monitoring path) -->
-                                    <path id="sysLineCctv" class="sys-flow-line sys-line-cctv" d="M 230 70 L 450 70" marker-end="url(#sysArrowBlue)" />
+                                    <!-- 1. CCTV Video Stream (Isolated Surveillance Branch) -->
+                                    <path id="sysLineCctv" class="sys-flow-line sys-line-cctv" d="M 330 75 L 560 75" marker-end="url(#sysArrowBlue)" />
+                                    <circle id="sysPulseCctv" class="sys-pulse-dot" r="4.5" fill="#38bdf8">
+                                        <animateMotion dur="2.4s" repeatCount="indefinite" path="M 330 75 L 560 75" />
+                                    </circle>
 
-                                    <!-- Door Sensor -> ESP32 Controller -->
-                                    <path id="sysLineDoorToEsp" class="sys-flow-line sys-line-sensor" d="M 230 220 L 370 220" marker-end="url(#sysArrowGreen)" />
+                                    <!-- 2. Door Sensor -> ESP32 Controller (Sensor State Input) -->
+                                    <path id="sysLineDoorToEsp" class="sys-flow-line sys-line-sensor" d="M 330 205 L 460 205" marker-end="url(#sysArrowGreen)" />
                                     <circle id="sysPulseDoor" class="sys-pulse-dot" r="4.5" fill="#10b981">
-                                        <animateMotion dur="2s" repeatCount="indefinite" path="M 230 220 L 370 220" />
+                                        <animateMotion dur="1.8s" repeatCount="indefinite" path="M 330 205 L 460 205" />
                                     </circle>
 
-                                    <!-- ESP32 -> Buzzer / Siren (Alarm Output) -->
-                                    <path id="sysLineEspToBuzzer" class="sys-flow-line sys-line-alarm" d="M 450 280 L 450 370 L 370 370" marker-end="url(#sysArrowRed)" />
+                                    <!-- 3. ESP32 -> Buzzer / Siren (Audible Alarm Output) -->
+                                    <path id="sysLineEspToBuzzer" class="sys-flow-line sys-line-alarm" d="M 540 265 L 540 300 L 205 300 L 205 335" marker-end="url(#sysArrowRed)" />
                                     <circle id="sysPulseBuzzer" class="sys-pulse-dot" r="4.5" fill="#ef4444" style="display: none;">
-                                        <animateMotion dur="1.2s" repeatCount="indefinite" path="M 450 280 L 450 370 L 370 370" />
+                                        <animateMotion dur="1.2s" repeatCount="indefinite" path="M 540 265 L 540 300 L 205 300 L 205 335" />
                                     </circle>
 
-                                    <!-- ESP32 -> Wi-Fi / Network -->
-                                    <path id="sysLineEspToWifi" class="sys-flow-line sys-line-network" d="M 530 220 L 670 220" marker-end="url(#sysArrowBlue)" />
+                                    <!-- 4. ESP32 -> Wi-Fi / Network Gateway -->
+                                    <path id="sysLineEspToWifi" class="sys-flow-line sys-line-network" d="M 680 265 L 680 300 L 520 300 L 520 335" marker-end="url(#sysArrowBlue)" />
                                     <circle id="sysPulseWifi" class="sys-pulse-dot" r="4.5" fill="#38bdf8">
-                                        <animateMotion dur="2.2s" repeatCount="indefinite" path="M 530 220 L 670 220" />
+                                        <animateMotion dur="2.2s" repeatCount="indefinite" path="M 680 265 L 680 300 L 520 300 L 520 335" />
                                     </circle>
 
-                                    <!-- Wi-Fi -> Phone Notification -->
-                                    <path id="sysLineWifiToPhone" class="sys-flow-line sys-line-wireless" d="M 750 270 L 750 370" marker-end="url(#sysArrowBlue)" stroke-dasharray="6 4" />
+                                    <!-- 5. Wi-Fi Gateway -> Phone Alert (Push Notification) -->
+                                    <path id="sysLineWifiToPhone" class="sys-flow-line sys-line-wireless" d="M 630 380 L 680 380" marker-end="url(#sysArrowBlue)" stroke-dasharray="6 4" />
                                     <circle id="sysPulsePhone" class="sys-pulse-dot" r="4.5" fill="#818cf8" style="display: none;">
-                                        <animateMotion dur="1.5s" repeatCount="indefinite" path="M 750 270 L 750 370" />
+                                        <animateMotion dur="1.4s" repeatCount="indefinite" path="M 630 380 L 680 380" />
                                     </circle>
-
-                                    <!-- Power Supply -> ESP32 / System -->
-                                    <path id="sysLinePowerToEsp" class="sys-flow-line sys-line-power" d="M 150 340 L 150 270 L 370 245" marker-end="url(#sysArrowAmber)" />
                                 </svg>
 
                                 <!-- System View Component Blocks Grid -->
                                 <div class="sys-blocks-layer">
+                                    <!-- ================= SURVEILLANCE SUBSYSTEM (ISOLATED) ================= -->
+                                    
                                     <!-- Block 1: CCTV Camera (Top Left) -->
-                                    <div class="sys-block-card" id="sysNodeCctv" data-component="cctv" style="left: 40px; top: 30px;">
+                                    <div class="sys-block-card" id="sysNodeCctv" data-component="cctv" style="left: 70px; top: 30px; width: 260px;">
                                         <div class="sys-block-header">
-                                            <span class="sys-block-tag">SURVEILLANCE</span>
+                                            <span class="sys-block-tag">SURVEILLANCE BRANCH</span>
                                             <span class="hw-node-status-led" id="sysLedCctv"></span>
                                         </div>
                                         <div class="sys-block-title">📹 CCTV CAMERA</div>
-                                        <div class="sys-block-desc">24/7 Visual Monitoring &amp; Recording</div>
-                                        <div class="sys-block-badge tag-blue">ISOLATED FROM ALARM</div>
+                                        <div class="sys-block-desc">24/7 Optical Video Stream &amp; Surveillance</div>
+                                        <div class="sys-block-badge tag-blue">ISOLATED FROM ALARM (NO BUZZER LINK)</div>
                                     </div>
 
-                                    <!-- Block 1b: Monitoring Hub (Top Center) -->
-                                    <div class="sys-block-card sys-hub-card" style="left: 460px; top: 30px;">
+                                    <!-- Block 1b: CCTV Monitoring / NVR (Top Right) -->
+                                    <div class="sys-block-card sys-hub-card" id="sysNodeCctvHub" style="left: 560px; top: 30px; width: 270px;">
                                         <div class="sys-block-header">
-                                            <span class="sys-block-tag">RECORDING HUB</span>
+                                            <span class="sys-block-tag">RECORDING STORAGE</span>
                                         </div>
-                                        <div class="sys-block-title">🖥️ MONITORING &amp; NVR</div>
-                                        <div class="sys-block-desc">Continuous Video Storage / Evidence</div>
+                                        <div class="sys-block-title">🖥️ CCTV MONITORING / NVR</div>
+                                        <div class="sys-block-desc">Continuous Video Recording &amp; Evidence Storage</div>
                                         <div class="sys-block-badge tag-gray">STREAM ACTIVE</div>
                                     </div>
 
+                                    <!-- ================= CORE INTRUSION SECURITY SUBSYSTEM ================= -->
+
                                     <!-- Block 2: Door Sensor (Middle Left) -->
-                                    <div class="sys-block-card" id="sysNodeDoor" data-component="door" style="left: 40px; top: 175px;">
+                                    <div class="sys-block-card" id="sysNodeDoor" data-component="door" style="left: 70px; top: 155px; width: 260px;">
                                         <div class="sys-block-header">
                                             <span class="sys-block-tag">INPUT SENSOR</span>
                                             <span class="hw-node-status-led" id="sysLedDoor"></span>
                                         </div>
                                         <div class="sys-block-title">🚪 DOOR SENSOR</div>
-                                        <div class="sys-block-desc">Protected Retail Entrance Contact</div>
+                                        <div class="sys-block-desc">Magnetic Contact on Protected Shop Door</div>
                                         <div class="sys-block-badge tag-red" id="sysBadgeDoor">PRIMARY ALARM TRIGGER</div>
                                     </div>
 
-                                    <!-- Block 3: ESP32 Central Controller (Center) -->
-                                    <div class="sys-block-card sys-block-esp32" id="sysNodeEsp32" data-component="esp32" style="left: 370px; top: 160px;">
+                                    <!-- Block 3: ESP32 Central Controller (Middle Center/Right) -->
+                                    <div class="sys-block-card sys-block-esp32" id="sysNodeEsp32" data-component="esp32" style="left: 460px; top: 145px; width: 370px;">
                                         <div class="sys-block-header">
-                                            <span class="sys-block-tag">MAIN CONTROLLER</span>
+                                            <span class="sys-block-tag">DECISION CONTROLLER</span>
                                             <span class="hw-node-status-led" id="sysLedEsp32"></span>
                                         </div>
                                         <div class="sys-block-title">⚙️ ESP32 CONTROLLER</div>
-                                        <div class="sys-block-desc">Evaluates 11:00 PM Security Rule</div>
+                                        <div class="sys-block-desc">Evaluates 11:00 PM Security Rule &amp; Door State</div>
+                                        <div class="sys-block-rule-box">
+                                            <span class="rule-bullet">&bull; &lt; 11:00 PM: Normal (No Alarm)</span>
+                                            <span class="rule-bullet">&bull; &ge; 11:00 PM: ARMED (Triggers Alarm on Open)</span>
+                                        </div>
                                         <div class="sys-block-badge tag-green" id="sysBadgeEsp32">MONITORING MODE</div>
                                     </div>
 
-                                    <!-- Block 4: Wi-Fi / Network (Middle Right) -->
-                                    <div class="sys-block-card" id="sysNodeWifi" data-component="wifi" style="left: 670px; top: 175px;">
+                                    <!-- Block 4: Buzzer / Siren (Bottom Left) -->
+                                    <div class="sys-block-card" id="sysNodeBuzzer" data-component="buzzer" style="left: 70px; top: 335px; width: 260px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">AUDIBLE ALARM</span>
+                                            <span class="hw-node-status-led standby" id="sysLedBuzzer"></span>
+                                        </div>
+                                        <div class="sys-block-title">📢 BUZZER / SIREN</div>
+                                        <div class="sys-block-desc">Local High-Decibel Acoustic Intrusion Warning</div>
+                                        <div class="sys-block-badge tag-gray" id="sysBadgeBuzzer">STANDBY</div>
+                                    </div>
+
+                                    <!-- Block 5: Wi-Fi / Network Gateway (Bottom Center) -->
+                                    <div class="sys-block-card" id="sysNodeWifi" data-component="wifi" style="left: 420px; top: 335px; width: 210px;">
                                         <div class="sys-block-header">
                                             <span class="sys-block-tag">COMMUNICATION</span>
                                             <span class="hw-node-status-led" id="sysLedWifi"></span>
                                         </div>
-                                        <div class="sys-block-title">📶 Wi-Fi / NETWORK</div>
-                                        <div class="sys-block-desc">Gateway to Notification Service</div>
+                                        <div class="sys-block-title">📶 WI-FI NETWORK</div>
+                                        <div class="sys-block-desc">IoT Gateway to Alert Dispatch</div>
                                         <div class="sys-block-badge tag-blue" id="sysBadgeWifi">CONNECTED</div>
                                     </div>
 
-                                    <!-- Block 5: Buzzer / Siren (Bottom Middle) -->
-                                    <div class="sys-block-card" id="sysNodeBuzzer" data-component="buzzer" style="left: 200px; top: 330px;">
-                                        <div class="sys-block-header">
-                                            <span class="sys-block-tag">ALARM OUTPUT</span>
-                                            <span class="hw-node-status-led standby" id="sysLedBuzzer"></span>
-                                        </div>
-                                        <div class="sys-block-title">📢 BUZZER / SIREN</div>
-                                        <div class="sys-block-desc">Local High-Decibel Audible Alert</div>
-                                        <div class="sys-block-badge tag-gray" id="sysBadgeBuzzer">STANDBY</div>
-                                    </div>
-
                                     <!-- Block 6: Phone Alert Receiver (Bottom Right) -->
-                                    <div class="sys-block-card" id="sysNodePhone" data-component="phone" style="left: 670px; top: 330px;">
+                                    <div class="sys-block-card" id="sysNodePhone" data-component="phone" style="left: 680px; top: 335px; width: 200px;">
                                         <div class="sys-block-header">
                                             <span class="sys-block-tag">ALERT RECEIVER</span>
                                             <span class="hw-node-status-led" id="sysLedPhone"></span>
                                         </div>
                                         <div class="sys-block-title">📱 PHONE ALERT</div>
-                                        <div class="sys-block-desc">Shop Owner Mobile Push Alert</div>
+                                        <div class="sys-block-desc">Shop Owner Push Notification</div>
                                         <div class="sys-block-badge tag-green" id="sysBadgePhone">READY</div>
-                                    </div>
-
-                                    <!-- Block 7: Power Supply (Bottom Left) -->
-                                    <div class="sys-block-card" id="sysNodePower" data-component="power" style="left: 40px; top: 330px;">
-                                        <div class="sys-block-header">
-                                            <span class="sys-block-tag">POWER SUPPLY</span>
-                                            <span class="hw-node-status-led" id="sysLedPower"></span>
-                                        </div>
-                                        <div class="sys-block-title">⚡ 5V DC POWER</div>
-                                        <div class="sys-block-desc">Regulated Power for MCU &amp; Sensors</div>
-                                        <div class="sys-block-badge tag-green">5.04V NORMAL</div>
                                     </div>
                                 </div>
                             </div>
@@ -982,16 +976,16 @@
                                 </div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Board Footer Legend Bar -->
-                            <div class="hw-board-legend">
-                                <div class="legend-item"><span class="legend-line legend-line-sensor"></span><span>Green: Sensor Input (GPIO 4)</span></div>
-                                <div class="legend-item"><span class="legend-line legend-line-alarm"></span><span>Red: Alarm Trigger (GPIO 18)</span></div>
-                                <div class="legend-item"><span class="legend-line legend-line-power"></span><span>Orange: +5V Power Rail</span></div>
-                                <div class="legend-item"><span class="legend-line legend-line-ground"></span><span>Black: Common Ground (GND)</span></div>
-                                <div class="legend-item"><span class="legend-line legend-line-network"></span><span>Blue: Wi-Fi / Push Dispatch</span></div>
-                                <div class="legend-item"><span class="legend-line legend-line-cctv"></span><span>Dashed: CCTV Stream (Isolated)</span></div>
+                                <!-- Board Footer Legend Bar (ONLY for Physical Circuit View) -->
+                                <div class="hw-board-legend">
+                                    <div class="legend-item"><span class="legend-line legend-line-sensor"></span><span>Green: Sensor Input (GPIO 4)</span></div>
+                                    <div class="legend-item"><span class="legend-line legend-line-alarm"></span><span>Red: Alarm Trigger (GPIO 18)</span></div>
+                                    <div class="legend-item"><span class="legend-line legend-line-power"></span><span>Orange: +5V Power Rail</span></div>
+                                    <div class="legend-item"><span class="legend-line legend-line-ground"></span><span>Black: Common Ground (GND)</span></div>
+                                    <div class="legend-item"><span class="legend-line legend-line-network"></span><span>Blue: Wi-Fi / Push Dispatch</span></div>
+                                    <div class="legend-item"><span class="legend-line legend-line-cctv"></span><span>Dashed: CCTV Stream (Isolated)</span></div>
+                                </div>
                             </div>
                         </div>
 

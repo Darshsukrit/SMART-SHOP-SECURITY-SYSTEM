@@ -1733,13 +1733,12 @@ button {
    VIEW 1: SYSTEM VIEW (LOGICAL ARCHITECTURE STYLING)
    ========================================================================== */
 #hwSystemViewContainer {
-    background-image: 
-        radial-gradient(rgba(51, 65, 85, 0.35) 1px, transparent 1px),
-        linear-gradient(to right, rgba(30, 41, 59, 0.15) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(30, 41, 59, 0.15) 1px, transparent 1px);
-    background-size: 24px 24px, 48px 48px, 48px 48px;
+    background: #090d16;
+    border-radius: var(--radius-md);
     position: relative;
     width: 100%;
+    height: 480px;
+    overflow: hidden;
 }
 
 .hw-system-svg {
@@ -1766,7 +1765,6 @@ button {
 .sys-line-network { stroke: #38bdf8; }
 .sys-line-wireless { stroke: #818cf8; }
 .sys-line-cctv { stroke: #3b82f6; stroke-dasharray: 6 4; }
-.sys-line-power { stroke: #f59e0b; }
 
 .sys-pulse-dot {
     filter: drop-shadow(0 0 6px currentColor);
@@ -1781,16 +1779,14 @@ button {
 
 .sys-block-card {
     position: absolute;
-    width: 190px;
-    background: rgba(15, 23, 42, 0.94);
+    background: #0f172a;
     border: 1.5px solid #334155;
     border-radius: var(--radius-md);
     padding: 10px 12px;
     color: #f8fafc;
     cursor: pointer;
     transition: all var(--transition-fast);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -1806,14 +1802,31 @@ button {
 }
 
 .sys-block-esp32 {
-    width: 200px;
     border-color: #475569;
-    background: rgba(15, 23, 42, 0.98);
+    background: #0f172a;
 }
 
 .sys-block-esp32.alert-active {
     border-color: #ef4444;
     box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.5), 0 8px 20px rgba(239, 68, 68, 0.3);
+}
+
+.sys-block-rule-box {
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(71, 85, 105, 0.4);
+    border-radius: var(--radius-sm);
+    padding: 3px 6px;
+    margin-bottom: 5px;
+    font-size: 0.62rem;
+    font-family: var(--font-mono);
+    color: #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.rule-bullet {
+    display: block;
 }
 
 .sys-hub-card {
@@ -2611,6 +2624,7 @@ button {
         min-height: auto !important;
         padding: 14px 10px !important;
         overflow: visible !important;
+        background: #090d16 !important;
     }
 
     .hw-system-svg {
@@ -2620,7 +2634,7 @@ button {
     .sys-blocks-layer {
         display: flex !important;
         flex-direction: column !important;
-        gap: 10px !important;
+        gap: 8px !important;
         position: static !important;
         width: 100% !important;
         height: auto !important;
@@ -2636,21 +2650,64 @@ button {
         box-sizing: border-box !important;
     }
 
-    .sys-block-card::after {
-        content: "↓ Logical Signal Flow";
+    #sysNodeCctv::after {
+        content: "↓ 24/7 Video Stream (Isolated Surveillance)";
         display: block;
         text-align: center;
-        font-size: 0.68rem;
+        font-size: 0.66rem;
         color: #38bdf8;
         font-family: var(--font-mono);
         margin-top: 8px;
         padding-top: 6px;
-        border-top: 1px dashed rgba(56, 189, 248, 0.25);
+        border-top: 1px dashed rgba(56, 189, 248, 0.3);
     }
 
-    .sys-block-card:last-child::after,
-    .sys-hub-card::after {
-        display: none;
+    #sysNodeCctvHub {
+        margin-bottom: 10px !important;
+        border-bottom: 2px dashed #334155 !important;
+        padding-bottom: 12px !important;
+    }
+
+    #sysNodeDoor::after {
+        content: "↓ Step 1: Magnetic Contact State Input";
+        display: block;
+        text-align: center;
+        font-size: 0.66rem;
+        color: #10b981;
+        font-family: var(--font-mono);
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px dashed rgba(16, 185, 129, 0.3);
+    }
+
+    #sysNodeEsp32::after {
+        content: "↓ Step 2: Evaluates 11 PM Rule & Dispatches Alerts";
+        display: block;
+        text-align: center;
+        font-size: 0.66rem;
+        color: #f59e0b;
+        font-family: var(--font-mono);
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px dashed rgba(245, 158, 11, 0.3);
+    }
+
+    #sysNodeWifi::after {
+        content: "↓ Step 3: IoT Push Notification Channel";
+        display: block;
+        text-align: center;
+        font-size: 0.66rem;
+        color: #818cf8;
+        font-family: var(--font-mono);
+        margin-top: 8px;
+        padding-top: 6px;
+        border-top: 1px dashed rgba(129, 140, 248, 0.3);
+    }
+
+    #sysNodeBuzzer::after,
+    #sysNodePhone::after,
+    #sysNodeCctvHub::after {
+        display: none !important;
     }
 
     /* Circuit View on Mobile */

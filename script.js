@@ -694,8 +694,49 @@
         }
 
         // ==========================================
-        // 2. SYNCHRONIZE SYSTEM VIEW (LOGICAL BLOCKS)
+        // 2. SYNCHRONIZE SYSTEM VIEW (LOGICAL ARCHITECTURE)
         // ==========================================
+        renderSystemArchitecture();
+
+        // ==========================================
+        // 3. SYNCHRONIZE CIRCUIT VIEW (PHYSICAL BENCH PROTOTYPE)
+        // ==========================================
+        renderCircuitDiagram();
+
+        // ==========================================
+        // 4. TOP-RIGHT SIMULATED HARDWARE STATUS TABLE
+        // ==========================================
+        if (elements.hwStatusRowEsp) {
+            elements.hwStatusRowEsp.textContent = isAlarm ? "● ALERT PROCESSING" : "● ONLINE";
+            elements.hwStatusRowEsp.className = isAlarm ? "hw-status-pill tag-red" : "hw-status-pill tag-green";
+        }
+        if (elements.hwStatusRowDoor) {
+            elements.hwStatusRowDoor.textContent = isDoorOpen ? "● OPEN" : "● CONNECTED";
+            elements.hwStatusRowDoor.className = isDoorOpen ? "hw-status-pill tag-red" : "hw-status-pill tag-green";
+        }
+        if (elements.hwStatusRowBuzzer) {
+            elements.hwStatusRowBuzzer.textContent = isAlarm ? "● ACTIVE (SIREN)" : "● READY";
+            elements.hwStatusRowBuzzer.className = isAlarm ? "hw-status-pill tag-red" : "hw-status-pill tag-gray";
+        }
+        if (elements.hwStatusRowPhone) {
+            elements.hwStatusRowPhone.textContent = isAlarm ? "● ALERT DISPATCHED" : "● READY";
+            elements.hwStatusRowPhone.className = isAlarm ? "hw-status-pill tag-red" : "hw-status-pill tag-green";
+        }
+
+        // ==========================================
+        // 5. BOTTOM FULL-WIDTH INSPECTOR CARD
+        // ==========================================
+        renderHardwareInspector(systemState.selectedHwComponent);
+    }
+
+    /**
+     * Renders System View (Logical Architecture & Signal Flow)
+     */
+    function renderSystemArchitecture() {
+        const isAlarm = (systemState.alarmStatus === "ACTIVE");
+        const isAfterHours = (systemState.securityMode === "AFTER_HOURS");
+        const isDoorOpen = (systemState.doorStatus === "OPEN");
+
         if (elements.sysNodeEsp32 && elements.sysBadgeEsp32 && elements.sysLedEsp32) {
             if (isAlarm) {
                 elements.sysNodeEsp32.classList.add("alert-active");
@@ -771,10 +812,16 @@
                 if (elements.sysPulsePhone) elements.sysPulsePhone.style.display = "none";
             }
         }
+    }
 
-        // ==========================================
-        // 3. SYNCHRONIZE CIRCUIT VIEW (PHYSICAL BENCH)
-        // ==========================================
+    /**
+     * Renders Circuit View (Physical Prototype & Breadboard Wiring)
+     */
+    function renderCircuitDiagram() {
+        const isAlarm = (systemState.alarmStatus === "ACTIVE");
+        const isAfterHours = (systemState.securityMode === "AFTER_HOURS");
+        const isDoorOpen = (systemState.doorStatus === "OPEN");
+
         if (elements.physNodeEsp32 && elements.physEspLed) {
             if (isAlarm) {
                 elements.physNodeEsp32.classList.add("alert-active");
@@ -820,32 +867,6 @@
                 if (elements.physPulsePhoneWire) elements.physPulsePhoneWire.style.display = "none";
             }
         }
-
-        // ==========================================
-        // 4. TOP-RIGHT SIMULATED HARDWARE STATUS TABLE
-        // ==========================================
-        if (elements.hwStatusRowEsp) {
-            elements.hwStatusRowEsp.textContent = isAlarm ? "● ALERT PROCESSING" : "● ONLINE";
-            elements.hwStatusRowEsp.className = isAlarm ? "hw-status-pill tag-red" : "hw-status-pill tag-green";
-        }
-        if (elements.hwStatusRowDoor) {
-            elements.hwStatusRowDoor.textContent = isDoorOpen ? "● OPEN" : "● CONNECTED";
-            elements.hwStatusRowDoor.className = isDoorOpen ? "hw-status-pill tag-red" : "hw-status-pill tag-green";
-        }
-        if (elements.hwStatusRowBuzzer) {
-            elements.hwStatusRowBuzzer.textContent = isAlarm ? "● ACTIVE (SIREN)" : "● READY";
-            elements.hwStatusRowBuzzer.className = isAlarm ? "hw-status-pill tag-red" : "hw-status-pill tag-gray";
-        }
-        if (elements.hwStatusRowPhone) {
-            elements.hwStatusRowPhone.textContent = isAlarm ? "● ALERT DISPATCHED" : "● READY";
-            elements.hwStatusRowPhone.className = isAlarm ? "hw-status-pill tag-red" : "hw-status-pill tag-green";
-        }
-
-        // ==========================================
-        // 5. BOTTOM FULL-WIDTH INSPECTOR CARD
-        // ==========================================
-        renderHardwareInspector(systemState.selectedHwComponent);
-    }
 
     /**
      * Renders detailed specification and live hardware metrics for the inspected component into the bottom full-width panel.
