@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Shop Security System | After-Hours Monitoring Dashboard</title>
+    <meta name="description" content="A clean, simple software interface and simulated security logic for a small retail shop after-hours monitoring system.">
+    <!-- Google Fonts for crisp, modern, professional typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- ==========================================
+             TOP HEADER
+             ========================================== -->
+        <header class="app-header">
+            <div class="header-left">
+                <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Toggle navigation menu">
+                    <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
+                <div class="brand-badge">
+                    <svg class="brand-shield" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1 class="brand-title">SMART SHOP SECURITY</h1>
+                    <p class="brand-subtitle">After-Hours Security Monitoring System</p>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <!-- System Status Indicator -->
+                <div class="status-pill status-pill-online" id="headerSystemStatus">
+                    <span class="pulse-dot"></span>
+                    <span class="status-pill-text">SYSTEM ONLINE</span>
+                </div>
+
+                <!-- Live Clock and Date -->
+                <div class="header-clock-widget">
+                    <div class="clock-time" id="headerTime">12:00:00 PM</div>
+                    <div class="clock-date" id="headerDate">Loading date...</div>
+                </div>
+
+                <!-- Simulation Mode Badge -->
+                <div class="simulation-tag" id="simModeTag" title="Clock operational mode">
+                    <span class="sim-tag-icon">⏰</span>
+                    <span id="simModeText">LIVE TIME</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ==========================================
+             MAIN APPLICATION LAYOUT (SIDEBAR + CONTENT)
+             ========================================== -->
+        <div class="app-body">
+            <!-- Sidebar Navigation -->
+            <aside class="app-sidebar" id="appSidebar">
+                <nav class="sidebar-nav">
+                    <button class="nav-item active" data-section="dashboard" id="navDashboard">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="nav-item" data-section="cctv" id="navCctv">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+                        <span>CCTV Monitoring</span>
+                    </button>
+                    <button class="nav-item" data-section="door" id="navDoor">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 3h18v18H3V3z"></path><path d="M6 3v18M18 12h.01"></path></svg>
+                        <span>Door Security</span>
+                    </button>
+                    <button class="nav-item" data-section="hardware" id="navHardware">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                        <span>Hardware & Circuit</span>
+                    </button>
+                    <button class="nav-item" data-section="events" id="navEvents">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <span>Events</span>
+                        <span class="event-badge" id="sidebarEventBadge">0</span>
+                    </button>
+                    <button class="nav-item" data-section="system" id="navSystem">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        <span>System Status</span>
+                    </button>
+                </nav>
+
+                <!-- Sidebar Footer Info -->
+                <div class="sidebar-info-box">
+                    <div class="sidebar-info-title">SECURITY RULE</div>
+                    <div class="sidebar-info-text">
+                        <span>Closing threshold: <strong>11:00 PM</strong></span><br>
+                        <span>Door sensor: <strong>Primary Alarm</strong></span><br>
+                        <span>CCTV: <strong>Evidence only</strong></span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Scrollable Content Area -->
+            <main class="app-main">
+                
+                <!-- ========================================================
+                     SECTION 1: DASHBOARD (MAIN VIEW)
+                     ======================================================== -->
+                <section class="content-section active" id="sectionDashboard">
+                    <!-- Page Header -->
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">Security Dashboard</h2>
+                            <p class="section-subtitle">Real-time shop security status</p>
+                        </div>
+                        <div class="quick-alarm-indicator" id="quickAlarmBanner">
+                            <span class="indicator-dot" id="quickAlarmDot"></span>
+                            <span id="quickAlarmText">ALARM INACTIVE</span>
+                        </div>
+                    </div>
+
+                    <!-- Prominent Security Status Banner -->
+                    <div class="security-banner banner-normal" id="mainSecurityBanner">
+                        <div class="banner-icon-container" id="bannerIcon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        </div>
+                        <div class="banner-content">
+                            <h3 class="banner-title" id="bannerTitle">✓ SYSTEM SECURE</h3>
+                            <p class="banner-desc" id="bannerDesc">Protected door is closed. No active security event.</p>
+                        </div>
+                        <div class="banner-action" id="bannerActionArea" style="display: none;">
+                            <button class="btn btn-danger-banner" id="bannerResetBtn">RESET ALARM</button>
+                        </div>
+                    </div>
+
+                    <!-- 4 Core Status Cards Grid -->
+                    <div class="status-cards-grid">
+                        <!-- Card 1: System Status -->
+                        <div class="status-card" id="cardSystem">
+                            <div class="card-header">
+                                <span class="card-label">SYSTEM STATUS</span>
+                                <span class="card-icon-tag system-icon-tag">●</span>
+                            </div>
+                            <div class="card-value status-val-online" id="cardSystemVal">● ONLINE</div>
+                            <div class="card-subtext" id="cardSystemSubtext">All monitored software components are operating.</div>
+                        </div>
+
+                        <!-- Card 2: Security Mode -->
+                        <div class="status-card" id="cardMode">
+                            <div class="card-header">
+                                <span class="card-label">SECURITY MODE</span>
+                                <span class="card-icon-tag mode-icon-tag">🕒</span>
+                            </div>
+                            <div class="card-value status-val-normal" id="cardModeVal">NORMAL</div>
+                            <div class="card-subtext" id="cardModeSubtext">Standard hours (Before 11:00 PM). Door sensor disarmed.</div>
+                        </div>
+
+                        <!-- Card 3: Door Status -->
+                        <div class="status-card" id="cardDoor">
+                            <div class="card-header">
+                                <span class="card-label">DOOR STATUS</span>
+                                <span class="card-icon-tag door-icon-tag">🚪</span>
+                            </div>
+                            <div class="card-value status-val-closed" id="cardDoorVal">CLOSED</div>
+                            <div class="card-subtext" id="cardDoorSubtext">Protected front entrance sensor is secure.</div>
+                        </div>
+
+                        <!-- Card 4: Alarm Status -->
+                        <div class="status-card" id="cardAlarm">
+                            <div class="card-header">
+                                <span class="card-label">ALARM STATUS</span>
+                                <span class="card-icon-tag alarm-icon-tag">🔔</span>
+                            </div>
+                            <div class="card-value status-val-inactive" id="cardAlarmVal">INACTIVE</div>
+                            <div class="card-subtext" id="cardAlarmSubtext">No unauthorized intrusion detected.</div>
+                        </div>
+                    </div>
+
+                    <!-- Split Dashboard Grid: Controls & Notifications -->
+                    <div class="dashboard-split-grid">
+                        <!-- Left Column: Demo / Test Controls -->
+                        <div class="dashboard-card test-controls-card">
+                            <div class="card-title-bar">
+                                <div class="card-title-group">
+                                    <span class="control-badge">SIMULATION</span>
+                                    <h3 class="panel-heading">DEMO / TEST CONTROLS</h3>
+                                </div>
+                                <span class="test-controls-hint">Simulate hardware inputs for testing</span>
+                            </div>
+
+                            <p class="control-description">
+                                Since physical sensors are not attached, use these controls to simulate shop conditions and test the security rule engine:
+                            </p>
+
+                            <div class="demo-buttons-grid">
+                                <button class="btn btn-control btn-door-open" id="btnSimDoorOpen" title="Simulate physical door opening">
+                                    <span class="btn-icon">🚪</span>
+                                    <span>Simulate Door Open</span>
+                                </button>
+                                <button class="btn btn-control btn-door-close" id="btnSimDoorClose" title="Simulate physical door closing">
+                                    <span class="btn-icon">🚪</span>
+                                    <span>Simulate Door Close</span>
+                                </button>
+                                <button class="btn btn-control btn-after-hours" id="btnSimAfterHours" title="Set simulated clock past 11:00 PM">
+                                    <span class="btn-icon">🌙</span>
+                                    <span>Simulate After-Hours (11:15 PM)</span>
+                                </button>
+                                <button class="btn btn-control btn-normal-hours" id="btnSimNormalHours" title="Set simulated clock to normal operating hours">
+                                    <span class="btn-icon">☀️</span>
+                                    <span>Simulate Normal Hours (2:30 PM)</span>
+                                </button>
+                                <button class="btn btn-control btn-cctv-motion" id="btnSimCctvMotion" title="Simulate visual motion in front of CCTV camera">
+                                    <span class="btn-icon">📹</span>
+                                    <span>Simulate CCTV Motion</span>
+                                </button>
+                                <button class="btn btn-control btn-reset-alarm" id="btnResetAlarm" title="Acknowledge and reset active alarm">
+                                    <span class="btn-icon">🔕</span>
+                                    <span>Reset Alarm</span>
+                                </button>
+                            </div>
+
+                            <!-- Live clock reset option -->
+                            <div class="time-override-bar">
+                                <span class="time-override-label">Current Clock Source:</span>
+                                <span class="time-override-status" id="clockSourceDisplay">Computer System Clock</span>
+                                <button class="btn-text-action" id="btnResetToLiveClock" title="Switch back to real system time">Revert to Live Clock</button>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Phone Notification Simulator & Mini Sensor View -->
+                        <div class="dashboard-right-column">
+                            
+                            <!-- Phone Notification Simulation Panel -->
+                            <div class="dashboard-card phone-notification-card">
+                                <div class="card-title-bar">
+                                    <div class="card-title-group">
+                                        <span class="panel-icon">📱</span>
+                                        <h3 class="panel-heading">PHONE NOTIFICATION SIMULATOR</h3>
+                                    </div>
+                                    <span class="notification-status-badge" id="notifStatusBadge">READY</span>
+                                </div>
+                                
+                                <div class="phone-display-container">
+                                    <!-- Idle State Box -->
+                                    <div class="phone-idle-state" id="phoneIdleState">
+                                        <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" class="idle-phone-icon"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                                        <p class="idle-title">No Active Push Alert</p>
+                                        <p class="idle-desc">Security push notifications are automatically dispatched to the shop owner's phone if the protected door opens after 11:00 PM.</p>
+                                    </div>
+
+                                    <!-- Active Alert Push Notification Card -->
+                                    <div class="phone-alert-card" id="phoneAlertCard" style="display: none;">
+                                        <div class="phone-card-top">
+                                            <div class="phone-app-identity">
+                                                <span class="app-icon-badge">🚨</span>
+                                                <span class="app-name">SHOP SECURITY ALERT</span>
+                                            </div>
+                                            <span class="phone-notif-time" id="phoneNotifTime">11:37 PM</span>
+                                        </div>
+                                        <div class="phone-card-body">
+                                            <div class="phone-alert-heading">🚨 CRITICAL INTRUSION DETECTED</div>
+                                            <div class="phone-alert-message">Protected door opened after 11:00 PM closing time.</div>
+                                            <div class="phone-meta-row">
+                                                <span><strong>Status:</strong> <span class="tag-red">ALARM ACTIVE</span></span>
+                                                <span><strong>Dispatch:</strong> <span class="tag-sent">SENT (SIMULATED)</span></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Live Door & CCTV Summary Widget -->
+                            <div class="dashboard-card mini-status-card">
+                                <div class="card-title-bar">
+                                    <h3 class="panel-heading">Live Subsystems Snapshot</h3>
+                                </div>
+                                <div class="mini-status-grid">
+                                    <div class="mini-item">
+                                        <span class="mini-item-label">Protected Door</span>
+                                        <span class="mini-item-val" id="miniDoorVal">CLOSED</span>
+                                    </div>
+                                    <div class="mini-item">
+                                        <span class="mini-item-label">Arming Rule</span>
+                                        <span class="mini-item-val" id="miniArmingVal">ARMED AFTER 11 PM</span>
+                                    </div>
+                                    <div class="mini-item">
+                                        <span class="mini-item-label">CCTV Camera 01</span>
+                                        <span class="mini-item-val" id="miniCctvVal">ONLINE (MONITORING)</span>
+                                    </div>
+                                    <div class="mini-item">
+                                        <span class="mini-item-label">Last Door Trigger</span>
+                                        <span class="mini-item-val" id="miniLastDoorVal">None</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity Summary Table on Dashboard -->
+                    <div class="dashboard-card recent-events-card">
+                        <div class="card-title-bar">
+                            <h3 class="panel-heading">Recent Security Events</h3>
+                            <button class="btn-text-action" id="btnViewAllEvents">View Complete Event Log &rarr;</button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="event-table" id="dashboardRecentEventsTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 140px;">TIME</th>
+                                        <th>EVENT</th>
+                                        <th style="width: 160px;">SOURCE</th>
+                                        <th style="width: 140px;">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="dashboardRecentEventsBody">
+                                    <!-- Populated dynamically by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ========================================================
+                     SECTION 2: CCTV MONITORING PANEL
+                     ======================================================== -->
+                <section class="content-section" id="sectionCctv">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">CCTV Monitoring</h2>
+                            <p class="section-subtitle">Visual shop surveillance & recording preview</p>
+                        </div>
+                        <div class="cctv-live-badge">
+                            <span class="pulse-dot"></span>
+                            <span>CAM 01 ACTIVE</span>
+                        </div>
+                    </div>
+
+                    <!-- CCTV Notice Box clarifying the core project rule -->
+                    <div class="info-callout">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="callout-icon"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        <div class="callout-text">
+                            <strong>System Architecture Rule:</strong> CCTV is designed exclusively for continuous monitoring, recording representation, and visual evidence review. 
+                            <strong>CCTV motion detection does NOT trigger the security alarm</strong> (the protected door sensor is the sole intrusion alarm trigger).
+                        </div>
+                    </div>
+
+                    <!-- Camera Viewport Container -->
+                    <div class="cctv-display-wrapper">
+                        <div class="cctv-viewport">
+                            <!-- CCTV Video HUD Overlays -->
+                            <div class="cctv-hud-top">
+                                <div class="cctv-cam-id">
+                                    <span class="cctv-rec-dot"></span>
+                                    <span>CAM 01 — MAIN ENTRANCE</span>
+                                </div>
+                                <div class="cctv-hud-clock" id="cctvHudClock">12:00:00 PM</div>
+                            </div>
+
+                            <!-- Simulated Canvas / Graphic Shop View -->
+                            <div class="cctv-scene">
+                                <svg class="cctv-scene-graphic" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
+                                    <defs>
+                                        <linearGradient id="shopFloor" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#1e293b"/>
+                                            <stop offset="100%" stop-color="#0f172a"/>
+                                        </linearGradient>
+                                        <linearGradient id="doorGlow" x1="0" y1="0" x2="1" y2="0">
+                                            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.2"/>
+                                            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.05"/>
+                                        </linearGradient>
+                                    </defs>
+
+                                    <!-- Background walls & floor -->
+                                    <rect x="0" y="0" width="800" height="280" fill="#1e293b" />
+                                    <polygon points="0,280 800,280 800,450 0,450" fill="url(#shopFloor)" />
+                                    
+                                    <!-- Perspective grid lines -->
+                                    <line x1="0" y1="280" x2="800" y2="280" stroke="#334155" stroke-width="2"/>
+                                    <line x1="120" y1="280" x2="0" y2="450" stroke="#334155" stroke-width="1" stroke-opacity="0.5"/>
+                                    <line x1="300" y1="280" x2="150" y2="450" stroke="#334155" stroke-width="1" stroke-opacity="0.5"/>
+                                    <line x1="500" y1="280" x2="650" y2="450" stroke="#334155" stroke-width="1" stroke-opacity="0.5"/>
+                                    <line x1="680" y1="280" x2="800" y2="450" stroke="#334155" stroke-width="1" stroke-opacity="0.5"/>
+
+                                    <!-- Shop Retail Shelves (Left) -->
+                                    <rect x="40" y="110" width="130" height="170" fill="#334155" rx="3"/>
+                                    <line x1="40" y1="150" x2="170" y2="150" stroke="#475569" stroke-width="3"/>
+                                    <line x1="40" y1="190" x2="170" y2="190" stroke="#475569" stroke-width="3"/>
+                                    <line x1="40" y1="230" x2="170" y2="230" stroke="#475569" stroke-width="3"/>
+                                    <!-- Items on shelves -->
+                                    <rect x="55" y="125" width="20" height="25" fill="#38bdf8" opacity="0.8"/>
+                                    <rect x="85" y="125" width="20" height="25" fill="#f59e0b" opacity="0.8"/>
+                                    <rect x="115" y="125" width="25" height="25" fill="#10b981" opacity="0.8"/>
+                                    <rect x="55" y="165" width="30" height="25" fill="#a855f7" opacity="0.8"/>
+                                    <rect x="95" y="165" width="25" height="25" fill="#ef4444" opacity="0.8"/>
+                                    <rect x="55" y="205" width="40" height="25" fill="#64748b" opacity="0.8"/>
+                                    <rect x="105" y="205" width="35" height="25" fill="#38bdf8" opacity="0.8"/>
+
+                                    <!-- Retail Counter & Register (Right) -->
+                                    <polygon points="560,200 740,200 760,330 540,330" fill="#334155"/>
+                                    <rect x="600" y="160" width="50" height="40" fill="#1e293b" stroke="#64748b" stroke-width="2"/>
+                                    <polygon points="590,200 660,200 650,210 600,210" fill="#475569"/>
+
+                                    <!-- Main Protected Glass Entrance Door (Center) -->
+                                    <rect x="310" y="60" width="180" height="220" fill="url(#doorGlow)" stroke="#64748b" stroke-width="4"/>
+                                    <rect x="320" y="70" width="75" height="200" fill="#0f172a" fill-opacity="0.4" stroke="#475569" stroke-width="2" id="cctvDoorGraphicLeft"/>
+                                    <rect x="405" y="70" width="75" height="200" fill="#0f172a" fill-opacity="0.4" stroke="#475569" stroke-width="2" id="cctvDoorGraphicRight"/>
+                                    <circle cx="390" cy="170" r="4" fill="#94a3b8"/>
+                                    <circle cx="410" cy="170" r="4" fill="#94a3b8"/>
+                                    
+                                    <!-- Door Sensor on Header -->
+                                    <rect x="385" y="62" width="30" height="8" fill="#10b981" id="cctvSensorGraphic"/>
+                                    
+                                    <!-- Hanging Overhead Sign -->
+                                    <rect x="335" y="15" width="130" height="30" fill="#0f172a" stroke="#64748b" stroke-width="1.5" rx="3"/>
+                                    <text x="400" y="35" fill="#f8fafc" font-size="13" font-family="Inter, sans-serif" font-weight="600" text-anchor="middle">SHOP ENTRANCE</text>
+                                </svg>
+
+                                <!-- Scanline effect & Motion HUD Box -->
+                                <div class="cctv-scanlines"></div>
+                                <div class="cctv-motion-overlay" id="cctvMotionAlert" style="display: none;">
+                                    <div class="motion-box-target"></div>
+                                    <div class="motion-pill-badge">
+                                        <span class="motion-warning-icon">⚠</span>
+                                        <span>MOTION DETECTED — SECTOR 01</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CCTV Bottom HUD Bar -->
+                            <div class="cctv-hud-bottom">
+                                <div>STATUS: <span class="cctv-hud-highlight">ONLINE</span> | STREAM: <span class="cctv-hud-highlight">1080p @ 30 FPS</span></div>
+                                <div>TRIGGER: <span class="cctv-hud-muted">NONE (SURVEILLANCE ONLY)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Camera Detail Cards -->
+                    <div class="cctv-controls-card">
+                        <div class="cctv-meta-grid">
+                            <div class="cctv-meta-item">
+                                <span class="meta-label">Camera Status</span>
+                                <span class="meta-val tag-green">ONLINE</span>
+                            </div>
+                            <div class="cctv-meta-item">
+                                <span class="meta-label">Location</span>
+                                <span class="meta-val">Main Entrance & Checkout</span>
+                            </div>
+                            <div class="cctv-meta-item">
+                                <span class="meta-label">Monitoring</span>
+                                <span class="meta-val tag-blue">ACTIVE 24/7</span>
+                            </div>
+                            <div class="cctv-meta-item">
+                                <span class="meta-label">Alarm Linkage</span>
+                                <span class="meta-val tag-gray">DISCONNECTED (BY DESIGN)</span>
+                            </div>
+                        </div>
+
+                        <div class="cctv-action-row">
+                            <button class="btn btn-control btn-cctv-motion" id="btnSimCctvMotionTab">
+                                <span class="btn-icon">📹</span>
+                                <span>Simulate CCTV Movement</span>
+                            </button>
+                            <span class="cctv-test-note">Test to confirm motion detection does NOT trigger the security alarm.</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================================
+                     SECTION 3: DOOR SECURITY PANEL
+                     ======================================================== -->
+                <section class="content-section" id="sectionDoor">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">Protected Door Security</h2>
+                            <p class="section-subtitle">Primary intrusion detection sensor and closing schedule</p>
+                        </div>
+                    </div>
+
+                    <!-- Status Grid -->
+                    <div class="door-status-grid">
+                        <div class="door-info-card">
+                            <div class="door-info-label">Protected Door</div>
+                            <div class="door-info-val">Front Main Entrance</div>
+                            <div class="door-info-sub">Single perimeter access point</div>
+                        </div>
+                        <div class="door-info-card">
+                            <div class="door-info-label">Current Door Status</div>
+                            <div class="door-info-val" id="doorSectionStatusVal">CLOSED</div>
+                            <div class="door-info-sub" id="doorSectionStatusSub">Magnetic contact connected</div>
+                        </div>
+                        <div class="door-info-card">
+                            <div class="door-info-label">Security Arming State</div>
+                            <div class="door-info-val" id="doorSectionArmVal">NORMAL (DISARMED)</div>
+                            <div class="door-info-sub">Arms automatically at 11:00 PM</div>
+                        </div>
+                        <div class="door-info-card">
+                            <div class="door-info-label">Closing Time Threshold</div>
+                            <div class="door-info-val">11:00 PM (23:00)</div>
+                            <div class="door-info-sub">Daily automatic arming schedule</div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Door Sensor Graphic & Mechanics Representation -->
+                    <div class="door-visualization-card">
+                        <h3 class="panel-heading">Visual Sensor Representation</h3>
+                        <p class="door-vis-desc">
+                            The security alarm is triggered exclusively when this magnetic reed switch circuit is broken during After-Hours mode.
+                        </p>
+
+                        <div class="door-diagram-container">
+                            <div class="door-frame-visual" id="doorFrameVisual">
+                                <!-- Sensor Magnet Frame Part -->
+                                <div class="sensor-unit sensor-frame" id="sensorFramePart">
+                                    <div class="sensor-led" id="sensorLed"></div>
+                                    <div class="sensor-tag">FRAME SENSOR</div>
+                                </div>
+
+                                <!-- Sensor Magnet Door Part -->
+                                <div class="sensor-unit sensor-door" id="sensorDoorPart">
+                                    <div class="sensor-tag">DOOR MAGNET</div>
+                                </div>
+
+                                <!-- Door Leaf -->
+                                <div class="door-leaf" id="doorLeaf">
+                                    <div class="door-handle"></div>
+                                    <div class="door-label-text">PROTECTED SHOP DOOR</div>
+                                </div>
+                            </div>
+
+                            <div class="door-circuit-state">
+                                <div class="circuit-status-line">
+                                    <span>Magnetic Circuit:</span>
+                                    <strong id="doorCircuitStatusText" class="text-green">CLOSED (CONTINUOUS)</strong>
+                                </div>
+                                <div class="circuit-status-line">
+                                    <span>Arming Condition:</span>
+                                    <strong id="doorArmingConditionText">NORMAL HOURS (NO ALARM ON OPEN)</strong>
+                                </div>
+                                <div class="circuit-status-line">
+                                    <span>Last Sensor Event:</span>
+                                    <strong id="doorLastEventText">None recorded</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="door-actions-toolbar">
+                            <button class="btn btn-control btn-door-open" id="btnSimDoorOpenSection">
+                                <span class="btn-icon">🚪</span>
+                                <span>Simulate Door Open</span>
+                            </button>
+                            <button class="btn btn-control btn-door-close" id="btnSimDoorCloseSection">
+                                <span class="btn-icon">🚪</span>
+                                <span>Simulate Door Close</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================================
+                     SECTION: HARDWARE & CIRCUIT ARCHITECTURE
+                     ======================================================== -->
+                <section class="content-section" id="sectionHardware">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">Hardware &amp; Circuit Architecture</h2>
+                            <p class="section-subtitle">Interactive physical component interconnects, GPIO pin mapping &amp; signal flow</p>
+                        </div>
+                        <!-- View Controls Toolbar -->
+                        <div class="hw-view-controls">
+                            <button class="hw-view-btn active" id="btnHwSystemView">System View</button>
+                            <button class="hw-view-btn" id="btnHwCircuitView">Circuit View</button>
+                            <button class="hw-view-btn hw-btn-accent" id="btnHwAutoFlow">▶ Auto Flow Demo</button>
+                            <button class="hw-view-btn" id="btnHwResetView">↺ Reset View</button>
+                        </div>
+                    </div>
+
+                    <!-- Top Layout: Large Canvas (Left) + Compact Controls & Status (Right) -->
+                    <div class="hw-top-layout-grid">
+                        
+                        <!-- Left: Large Visual Canvas Container -->
+                        <div class="hw-canvas-container" id="hwCanvasContainer">
+                            
+                            <!-- Canvas Top Info Banner -->
+                            <div class="hw-board-banner">
+                                <div class="hw-banner-left">
+                                    <span class="hw-chip-led" id="hwCanvasLed"></span>
+                                    <span class="hw-board-title" id="hwBoardModeTitle">SYSTEM ARCHITECTURE VIEW &bull; LOGICAL SIGNAL FLOW</span>
+                                </div>
+                                <div class="hw-banner-right">
+                                    <span class="hw-tag" id="hwFlowStateTag">STATE: NORMAL MONITORING</span>
+                                </div>
+                            </div>
+
+                            <!-- ==============================================
+                                 VIEW 1: SYSTEM VIEW (LOGICAL ARCHITECTURE)
+                                 Clean architectural cards and logical signal flow
+                                 ============================================== -->
+                            <div class="hw-view-container active" id="hwSystemViewContainer">
+                                <svg class="hw-system-svg" id="hwSystemSvg" viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet">
+                                    <defs>
+                                        <!-- Arrow Markers for Logical Data Flow -->
+                                        <marker id="sysArrowGreen" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#10b981" />
+                                        </marker>
+                                        <marker id="sysArrowRed" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#ef4444" />
+                                        </marker>
+                                        <marker id="sysArrowBlue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#38bdf8" />
+                                        </marker>
+                                        <marker id="sysArrowAmber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#f59e0b" />
+                                        </marker>
+                                    </defs>
+
+                                    <!-- CCTV Stream (Isolated top monitoring path) -->
+                                    <path id="sysLineCctv" class="sys-flow-line sys-line-cctv" d="M 230 70 L 450 70" marker-end="url(#sysArrowBlue)" />
+
+                                    <!-- Door Sensor -> ESP32 Controller -->
+                                    <path id="sysLineDoorToEsp" class="sys-flow-line sys-line-sensor" d="M 230 220 L 370 220" marker-end="url(#sysArrowGreen)" />
+                                    <circle id="sysPulseDoor" class="sys-pulse-dot" r="4.5" fill="#10b981">
+                                        <animateMotion dur="2s" repeatCount="indefinite" path="M 230 220 L 370 220" />
+                                    </circle>
+
+                                    <!-- ESP32 -> Buzzer / Siren (Alarm Output) -->
+                                    <path id="sysLineEspToBuzzer" class="sys-flow-line sys-line-alarm" d="M 450 280 L 450 370 L 370 370" marker-end="url(#sysArrowRed)" />
+                                    <circle id="sysPulseBuzzer" class="sys-pulse-dot" r="4.5" fill="#ef4444" style="display: none;">
+                                        <animateMotion dur="1.2s" repeatCount="indefinite" path="M 450 280 L 450 370 L 370 370" />
+                                    </circle>
+
+                                    <!-- ESP32 -> Wi-Fi / Network -->
+                                    <path id="sysLineEspToWifi" class="sys-flow-line sys-line-network" d="M 530 220 L 670 220" marker-end="url(#sysArrowBlue)" />
+                                    <circle id="sysPulseWifi" class="sys-pulse-dot" r="4.5" fill="#38bdf8">
+                                        <animateMotion dur="2.2s" repeatCount="indefinite" path="M 530 220 L 670 220" />
+                                    </circle>
+
+                                    <!-- Wi-Fi -> Phone Notification -->
+                                    <path id="sysLineWifiToPhone" class="sys-flow-line sys-line-wireless" d="M 750 270 L 750 370" marker-end="url(#sysArrowBlue)" stroke-dasharray="6 4" />
+                                    <circle id="sysPulsePhone" class="sys-pulse-dot" r="4.5" fill="#818cf8" style="display: none;">
+                                        <animateMotion dur="1.5s" repeatCount="indefinite" path="M 750 270 L 750 370" />
+                                    </circle>
+
+                                    <!-- Power Supply -> ESP32 / System -->
+                                    <path id="sysLinePowerToEsp" class="sys-flow-line sys-line-power" d="M 150 340 L 150 270 L 370 245" marker-end="url(#sysArrowAmber)" />
+                                </svg>
+
+                                <!-- System View Component Blocks Grid -->
+                                <div class="sys-blocks-layer">
+                                    <!-- Block 1: CCTV Camera (Top Left) -->
+                                    <div class="sys-block-card" id="sysNodeCctv" data-component="cctv" style="left: 40px; top: 30px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">SURVEILLANCE</span>
+                                            <span class="hw-node-status-led" id="sysLedCctv"></span>
+                                        </div>
+                                        <div class="sys-block-title">📹 CCTV CAMERA</div>
+                                        <div class="sys-block-desc">24/7 Visual Monitoring &amp; Recording</div>
+                                        <div class="sys-block-badge tag-blue">ISOLATED FROM ALARM</div>
+                                    </div>
+
+                                    <!-- Block 1b: Monitoring Hub (Top Center) -->
+                                    <div class="sys-block-card sys-hub-card" style="left: 460px; top: 30px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">RECORDING HUB</span>
+                                        </div>
+                                        <div class="sys-block-title">🖥️ MONITORING &amp; NVR</div>
+                                        <div class="sys-block-desc">Continuous Video Storage / Evidence</div>
+                                        <div class="sys-block-badge tag-gray">STREAM ACTIVE</div>
+                                    </div>
+
+                                    <!-- Block 2: Door Sensor (Middle Left) -->
+                                    <div class="sys-block-card" id="sysNodeDoor" data-component="door" style="left: 40px; top: 175px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">INPUT SENSOR</span>
+                                            <span class="hw-node-status-led" id="sysLedDoor"></span>
+                                        </div>
+                                        <div class="sys-block-title">🚪 DOOR SENSOR</div>
+                                        <div class="sys-block-desc">Protected Retail Entrance Contact</div>
+                                        <div class="sys-block-badge tag-red" id="sysBadgeDoor">PRIMARY ALARM TRIGGER</div>
+                                    </div>
+
+                                    <!-- Block 3: ESP32 Central Controller (Center) -->
+                                    <div class="sys-block-card sys-block-esp32" id="sysNodeEsp32" data-component="esp32" style="left: 370px; top: 160px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">MAIN CONTROLLER</span>
+                                            <span class="hw-node-status-led" id="sysLedEsp32"></span>
+                                        </div>
+                                        <div class="sys-block-title">⚙️ ESP32 CONTROLLER</div>
+                                        <div class="sys-block-desc">Evaluates 11:00 PM Security Rule</div>
+                                        <div class="sys-block-badge tag-green" id="sysBadgeEsp32">MONITORING MODE</div>
+                                    </div>
+
+                                    <!-- Block 4: Wi-Fi / Network (Middle Right) -->
+                                    <div class="sys-block-card" id="sysNodeWifi" data-component="wifi" style="left: 670px; top: 175px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">COMMUNICATION</span>
+                                            <span class="hw-node-status-led" id="sysLedWifi"></span>
+                                        </div>
+                                        <div class="sys-block-title">📶 Wi-Fi / NETWORK</div>
+                                        <div class="sys-block-desc">Gateway to Notification Service</div>
+                                        <div class="sys-block-badge tag-blue" id="sysBadgeWifi">CONNECTED</div>
+                                    </div>
+
+                                    <!-- Block 5: Buzzer / Siren (Bottom Middle) -->
+                                    <div class="sys-block-card" id="sysNodeBuzzer" data-component="buzzer" style="left: 200px; top: 330px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">ALARM OUTPUT</span>
+                                            <span class="hw-node-status-led standby" id="sysLedBuzzer"></span>
+                                        </div>
+                                        <div class="sys-block-title">📢 BUZZER / SIREN</div>
+                                        <div class="sys-block-desc">Local High-Decibel Audible Alert</div>
+                                        <div class="sys-block-badge tag-gray" id="sysBadgeBuzzer">STANDBY</div>
+                                    </div>
+
+                                    <!-- Block 6: Phone Alert Receiver (Bottom Right) -->
+                                    <div class="sys-block-card" id="sysNodePhone" data-component="phone" style="left: 670px; top: 330px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">ALERT RECEIVER</span>
+                                            <span class="hw-node-status-led" id="sysLedPhone"></span>
+                                        </div>
+                                        <div class="sys-block-title">📱 PHONE ALERT</div>
+                                        <div class="sys-block-desc">Shop Owner Mobile Push Alert</div>
+                                        <div class="sys-block-badge tag-green" id="sysBadgePhone">READY</div>
+                                    </div>
+
+                                    <!-- Block 7: Power Supply (Bottom Left) -->
+                                    <div class="sys-block-card" id="sysNodePower" data-component="power" style="left: 40px; top: 330px;">
+                                        <div class="sys-block-header">
+                                            <span class="sys-block-tag">POWER SUPPLY</span>
+                                            <span class="hw-node-status-led" id="sysLedPower"></span>
+                                        </div>
+                                        <div class="sys-block-title">⚡ 5V DC POWER</div>
+                                        <div class="sys-block-desc">Regulated Power for MCU &amp; Sensors</div>
+                                        <div class="sys-block-badge tag-green">5.04V NORMAL</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ==============================================
+                                 VIEW 2: CIRCUIT VIEW (PHYSICAL PROTOTYPE / WIRING)
+                                 Bench-top prototype with physical modules, pins & visible wires
+                                 ============================================== -->
+                            <div class="hw-view-container" id="hwCircuitViewContainer">
+                                <svg class="hw-circuit-svg" id="hwCircuitSvg" viewBox="0 0 900 480" preserveAspectRatio="xMidYMid meet">
+                                    <defs>
+                                        <!-- Terminal Pin Dots Marker -->
+                                        <pattern id="breadboardHoles" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+                                            <circle cx="8" cy="8" r="1.5" fill="#1e293b" opacity="0.6"/>
+                                        </pattern>
+                                    </defs>
+
+                                    <!-- Background Breadboard Bus Grid -->
+                                    <rect x="0" y="0" width="900" height="480" fill="url(#breadboardHoles)"/>
+
+                                    <!-- ========================================================
+                                         PHYSICAL WIRES (Color-coded + Animated flow paths)
+                                         ======================================================== -->
+                                    
+                                    <!-- 1. GREEN WIRE: Door Sensor SIGNAL OUT (Pin 3) -> ESP32 GPIO 4 -->
+                                    <path id="wirePhysicalSensor" class="phys-wire wire-green" d="M 190 220 L 270 220 L 270 230 L 370 230" />
+                                    <!-- Flow pulse -->
+                                    <circle id="physPulseSensor" class="phys-pulse" r="4" fill="#34d399">
+                                        <animateMotion dur="1.8s" repeatCount="indefinite" path="M 190 220 L 270 220 L 270 230 L 370 230" />
+                                    </circle>
+
+                                    <!-- 2. ORANGE POWER WIRE: 5V Supply VCC -> ESP32 VIN & Sensor VCC -->
+                                    <path id="wirePhysicalPowerVin" class="phys-wire wire-orange" d="M 170 380 L 300 380 L 300 290 L 370 290" />
+                                    <path id="wirePhysicalPowerDoor" class="phys-wire wire-orange" d="M 170 380 L 250 380 L 250 200 L 190 200" />
+
+                                    <!-- 3. BLACK GROUND BUS: Common GND between Power, ESP32, Sensor, Buzzer -->
+                                    <path id="wirePhysicalGndEsp" class="phys-wire wire-black" d="M 170 410 L 320 410 L 320 320 L 370 320" />
+                                    <path id="wirePhysicalGndDoor" class="phys-wire wire-black" d="M 170 410 L 230 410 L 230 240 L 190 240" />
+                                    <path id="wirePhysicalGndBuzzer" class="phys-wire wire-black" d="M 320 410 L 610 410 L 610 395" />
+
+                                    <!-- 4. RED ALARM WIRE: ESP32 GPIO 18 -> Buzzer (+) Pin -->
+                                    <path id="wirePhysicalAlarm" class="phys-wire wire-red-inactive" d="M 540 260 L 610 260 L 610 365" />
+                                    <circle id="physPulseBuzzerWire" class="phys-pulse" r="4" fill="#ef4444" style="display: none;">
+                                        <animateMotion dur="1s" repeatCount="indefinite" path="M 540 260 L 610 260 L 610 365" />
+                                    </circle>
+
+                                    <!-- 5. BLUE NETWORK DATA BUS: ESP32 Wi-Fi Interface -> Wi-Fi Module -->
+                                    <path id="wirePhysicalWifi" class="phys-wire wire-blue" d="M 540 200 L 670 200" />
+                                    <circle id="physPulseWifiWire" class="phys-pulse" r="4" fill="#38bdf8">
+                                        <animateMotion dur="2.2s" repeatCount="indefinite" path="M 540 200 L 670 200" />
+                                    </circle>
+
+                                    <!-- 6. BLUE WIRELESS DISPATCH: Wi-Fi Gateway -> Phone Push Receiver -->
+                                    <path id="wirePhysicalPhone" class="phys-wire wire-blue-dashed" d="M 770 240 L 770 340" stroke-dasharray="6 4" />
+                                    <circle id="physPulsePhoneWire" class="phys-pulse" r="4" fill="#818cf8" style="display: none;">
+                                        <animateMotion dur="1.4s" repeatCount="indefinite" path="M 770 240 L 770 340" />
+                                    </circle>
+
+                                    <!-- 7. ISOLATED CCTV STREAM CABLE: Camera Unit -> Surveillance Recorder -->
+                                    <path id="wirePhysicalCctv" class="phys-wire wire-cctv-cable" d="M 190 85 L 430 85" stroke-dasharray="8 4" />
+                                    <circle id="physPulseCctvWire" class="phys-pulse" r="4" fill="#60a5fa">
+                                        <animateMotion dur="2.5s" repeatCount="indefinite" path="M 190 85 L 430 85" />
+                                    </circle>
+                                </svg>
+
+                                <!-- Physical Hardware Modules Layer -->
+                                <div class="phys-modules-layer">
+
+                                    <!-- Physical Module 1: CCTV Camera Unit (Top Left) -->
+                                    <div class="phys-module-card phys-cctv-card" id="physNodeCctv" data-component="cctv" style="left: 35px; top: 40px;">
+                                        <div class="phys-mod-badge">SURVEILLANCE MODULE</div>
+                                        <div class="phys-mod-name">📹 1080p CCTV CAM-01</div>
+                                        <div class="phys-cctv-lens-graphic"></div>
+                                        <div class="phys-terminals-right">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">RTSP STREAM</span>
+                                                <span class="phys-pin-dot pin-blue"></span>
+                                            </div>
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">ISOLATED LINE</span>
+                                                <span class="phys-pin-dot pin-gray"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Physical Module 1b: Video Hub / DVR (Top Center) -->
+                                    <div class="phys-module-card phys-dvr-card" style="left: 440px; top: 45px;">
+                                        <div class="phys-mod-badge">LOCAL RECORDING</div>
+                                        <div class="phys-mod-name">💾 24/7 NVR Video Hub</div>
+                                        <div class="phys-terminals-left">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-dot pin-blue"></span>
+                                                <span class="phys-pin-label">IP IN</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Physical Module 2: Magnetic Reed Door Sensor (Middle Left) -->
+                                    <div class="phys-module-card phys-door-card" id="physNodeDoor" data-component="door" style="left: 35px; top: 165px;">
+                                        <div class="phys-mod-badge">DOOR SENSOR</div>
+                                        <div class="phys-mod-name">🚪 Magnetic Contact Switch</div>
+                                        <div class="phys-reed-switch-art">
+                                            <div class="phys-magnet-block" id="physMagnetBlock">🧲 MAGNET</div>
+                                            <div class="phys-switch-block">REED SWITCH</div>
+                                        </div>
+                                        <div class="phys-terminals-right">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">VCC (5V)</span>
+                                                <span class="phys-pin-dot pin-orange"></span>
+                                            </div>
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">SIGNAL (GPIO 4)</span>
+                                                <span class="phys-pin-dot pin-green" id="physDoorSignalDot"></span>
+                                            </div>
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">GND</span>
+                                                <span class="phys-pin-dot pin-black"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Physical Module 3: ESP32 Development Board (Center) -->
+                                    <div class="phys-module-card phys-esp32-card" id="physNodeEsp32" data-component="esp32" style="left: 370px; top: 155px;">
+                                        <div class="phys-mod-badge">MCU CORE</div>
+                                        <div class="phys-esp32-pcb">
+                                            <div class="phys-esp-rf-shield">
+                                                <span class="rf-label">ESP-WROOM-32</span>
+                                                <span class="rf-led" id="physEspLed"></span>
+                                            </div>
+                                            <div class="phys-esp-antenna-gold"></div>
+                                        </div>
+
+                                        <!-- Left Pin Header: GPIO 4, VIN, GND -->
+                                        <div class="phys-terminals-left">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-dot pin-green"></span>
+                                                <span class="phys-pin-label">GPIO 4 (DOOR IN)</span>
+                                            </div>
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-dot pin-orange"></span>
+                                                <span class="phys-pin-label">VIN (5V POWER)</span>
+                                            </div>
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-dot pin-black"></span>
+                                                <span class="phys-pin-label">GND (GROUND)</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Right Pin Header: GPIO 18 (BUZZER), Wi-Fi Radio -->
+                                        <div class="phys-terminals-right">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">Wi-Fi 2.4GHz</span>
+                                                <span class="phys-pin-dot pin-blue"></span>
+                                            </div>
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">GPIO 18 (BUZZER OUT)</span>
+                                                <span class="phys-pin-dot pin-red" id="physEspAlarmDot"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Physical Module 4: Wi-Fi Gateway / Network (Middle Right) -->
+                                    <div class="phys-module-card phys-wifi-card" id="physNodeWifi" data-component="wifi" style="left: 670px; top: 165px;">
+                                        <div class="phys-mod-badge">NETWORK GATEWAY</div>
+                                        <div class="phys-mod-name">📶 2.4GHz Wi-Fi Router</div>
+                                        <div class="phys-terminals-left">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-dot pin-blue"></span>
+                                                <span class="phys-pin-label">WIRELESS LINK</span>
+                                            </div>
+                                        </div>
+                                        <div class="phys-terminals-bottom">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">PUSH DISPATCH</span>
+                                                <span class="phys-pin-dot pin-blue"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Physical Module 5: Piezo Buzzer / Siren (Bottom Right-Center) -->
+                                    <div class="phys-module-card phys-buzzer-card" id="physNodeBuzzer" data-component="buzzer" style="left: 540px; top: 340px;">
+                                        <div class="phys-mod-badge">LOCAL SIREN</div>
+                                        <div class="phys-buzzer-cylinder" id="physBuzzerCylinder">
+                                            <div class="buzzer-hole">📢</div>
+                                        </div>
+                                        <div class="phys-terminals-top">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">+ (GPIO 18)</span>
+                                                <span class="phys-pin-dot pin-red"></span>
+                                            </div>
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">- (GND)</span>
+                                                <span class="phys-pin-dot pin-black"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Physical Module 6: Phone / Notification Endpoint (Bottom Right) -->
+                                    <div class="phys-module-card phys-phone-card" id="physNodePhone" data-component="phone" style="left: 710px; top: 330px;">
+                                        <div class="phys-mod-badge">MOBILE CLIENT</div>
+                                        <div class="phys-phone-chassis">
+                                            <div class="phone-screen-notch"></div>
+                                            <div class="phone-screen-text" id="physPhoneScreenText">READY</div>
+                                        </div>
+                                        <div class="phys-terminals-top">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">PUSH RECV</span>
+                                                <span class="phys-pin-dot pin-blue"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Physical Module 7: 5V DC Power Supply (Bottom Left) -->
+                                    <div class="phys-module-card phys-power-card" id="physNodePower" data-component="power" style="left: 35px; top: 340px;">
+                                        <div class="phys-mod-badge">POWER SUPPLY</div>
+                                        <div class="phys-mod-name">⚡ 5V 2A DC Adapter</div>
+                                        <div class="phys-terminals-right">
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">+5V DC (VCC)</span>
+                                                <span class="phys-pin-dot pin-orange"></span>
+                                            </div>
+                                            <div class="phys-pin-entry">
+                                                <span class="phys-pin-label">GND (0V)</span>
+                                                <span class="phys-pin-dot pin-black"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Board Footer Legend Bar -->
+                            <div class="hw-board-legend">
+                                <div class="legend-item"><span class="legend-line legend-line-sensor"></span><span>Green: Sensor Input (GPIO 4)</span></div>
+                                <div class="legend-item"><span class="legend-line legend-line-alarm"></span><span>Red: Alarm Trigger (GPIO 18)</span></div>
+                                <div class="legend-item"><span class="legend-line legend-line-power"></span><span>Orange: +5V Power Rail</span></div>
+                                <div class="legend-item"><span class="legend-line legend-line-ground"></span><span>Black: Common Ground (GND)</span></div>
+                                <div class="legend-item"><span class="legend-line legend-line-network"></span><span>Blue: Wi-Fi / Push Dispatch</span></div>
+                                <div class="legend-item"><span class="legend-line legend-line-cctv"></span><span>Dashed: CCTV Stream (Isolated)</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Compact Demo Controls & Simulated Hardware Status Sidebar -->
+                        <div class="hw-top-sidebar">
+
+                            <!-- Compact Card 1: Demo / Simulation Controls -->
+                            <div class="dashboard-card hw-sidebar-controls-card">
+                                <div class="card-title-bar">
+                                    <div class="card-title-group">
+                                        <span class="panel-icon">🛠️</span>
+                                        <h3 class="panel-heading">Hardware Controls</h3>
+                                    </div>
+                                    <span class="control-badge">LIVE TEST</span>
+                                </div>
+                                <div class="hw-actions-grid">
+                                    <button class="btn btn-control btn-door-open" id="hwBtnDoorOpen">🚪 Door Open</button>
+                                    <button class="btn btn-control btn-door-close" id="hwBtnDoorClose">🚪 Door Close</button>
+                                    <button class="btn btn-control btn-after-hours" id="hwBtnAfterHours">🌙 After-Hours</button>
+                                    <button class="btn btn-control btn-normal-hours" id="hwBtnNormalHours">☀️ Normal Hours</button>
+                                    <button class="btn btn-control btn-reset-alarm hw-btn-span-2" id="hwBtnResetAlarm">🔕 Reset Alarm</button>
+                                </div>
+                            </div>
+
+                            <!-- Compact Card 2: Simulated Hardware Status Summary -->
+                            <div class="dashboard-card hw-sidebar-status-card">
+                                <div class="card-title-bar">
+                                    <h3 class="panel-heading">Hardware Status</h3>
+                                    <span class="control-badge">SIMULATED</span>
+                                </div>
+                                <div class="hw-status-list">
+                                    <div class="hw-status-row">
+                                        <span class="hw-status-name">ESP32</span>
+                                        <span class="hw-status-pill tag-green" id="hwStatusRowEsp">● ONLINE</span>
+                                    </div>
+                                    <div class="hw-status-row">
+                                        <span class="hw-status-name">Door Sensor</span>
+                                        <span class="hw-status-pill tag-green" id="hwStatusRowDoor">● CONNECTED</span>
+                                    </div>
+                                    <div class="hw-status-row">
+                                        <span class="hw-status-name">Buzzer / Siren</span>
+                                        <span class="hw-status-pill tag-gray" id="hwStatusRowBuzzer">● READY</span>
+                                    </div>
+                                    <div class="hw-status-row">
+                                        <span class="hw-status-name">CCTV Camera</span>
+                                        <span class="hw-status-pill tag-blue" id="hwStatusRowCctv">● ONLINE</span>
+                                    </div>
+                                    <div class="hw-status-row">
+                                        <span class="hw-status-name">Wi-Fi Network</span>
+                                        <span class="hw-status-pill tag-blue" id="hwStatusRowWifi">● CONNECTED</span>
+                                    </div>
+                                    <div class="hw-status-row">
+                                        <span class="hw-status-name">Notification</span>
+                                        <span class="hw-status-pill tag-green" id="hwStatusRowPhone">● READY</span>
+                                    </div>
+                                    <div class="hw-status-row">
+                                        <span class="hw-status-name">Power Supply</span>
+                                        <span class="hw-status-pill tag-green" id="hwStatusRowPower">● NORMAL</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Bottom Section: Full-Width Detailed Component Information Panel -->
+                    <div class="dashboard-card hw-info-fullwidth-card" id="hwInspectorCard">
+                        <div class="card-title-bar">
+                            <div class="card-title-group">
+                                <span class="panel-icon">🔍</span>
+                                <h3 class="panel-heading" id="hwInspectorTitle">Component &amp; Sensor Information</h3>
+                            </div>
+                            <span class="hw-inspector-badge" id="hwInspectorTag">CLICK ANY COMPONENT ABOVE</span>
+                        </div>
+                        
+                        <div class="hw-inspector-content" id="hwInspectorContent">
+                            <div class="hw-inspector-placeholder">
+                                <p>Click on any hardware component or wiring terminal above to inspect its technical pinout, physical interface specifications, and active logic state.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ========================================================
+                     SECTION 4: EVENT LOG PANEL
+                     ======================================================== -->
+                <section class="content-section" id="sectionEvents">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">Security Event Log</h2>
+                            <p class="section-subtitle">Chronological audit trail of all security, door, and monitoring events</p>
+                        </div>
+                        <div class="events-actions-group">
+                            <button class="btn btn-secondary-sm" id="btnClearEvents">Clear Event Log</button>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="event-filter-bar">
+                            <span class="filter-label">Filter Log:</span>
+                            <button class="filter-btn active" data-filter="all">All Events</button>
+                            <button class="filter-btn" data-filter="alarm">Alerts & Alarms</button>
+                            <button class="filter-btn" data-filter="door">Door Activity</button>
+                            <button class="filter-btn" data-filter="cctv">CCTV</button>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="event-table" id="fullEventsTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 140px;">TIME</th>
+                                        <th>EVENT</th>
+                                        <th style="width: 160px;">SOURCE</th>
+                                        <th style="width: 140px;">STATUS</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="fullEventsBody">
+                                    <!-- Populated dynamically by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer-info" id="eventsCountInfo">
+                            Showing 0 recorded events
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================================
+                     SECTION 5: SYSTEM STATUS & DIAGNOSTICS
+                     ======================================================== -->
+                <section class="content-section" id="sectionSystem">
+                    <div class="section-header">
+                        <div>
+                            <h2 class="section-title">System Status & Diagnostics</h2>
+                            <p class="section-subtitle">Software subsystem health, sensor states, and prototype specifications</p>
+                        </div>
+                        <div class="status-pill status-pill-online">
+                            <span class="pulse-dot"></span>
+                            <span>ALL MODULES ONLINE</span>
+                        </div>
+                    </div>
+
+                    <!-- Diagnostics Grid -->
+                    <div class="system-status-grid">
+                        <div class="diag-card">
+                            <div class="diag-header">
+                                <span class="diag-title">Central Controller</span>
+                                <span class="diag-badge tag-green">SIMULATED / ONLINE</span>
+                            </div>
+                            <div class="diag-body">
+                                <p>Core state machine managing after-hours timing and intrusion verification.</p>
+                                <ul class="diag-list">
+                                    <li>Logic Execution: <strong>Active (1000ms loop)</strong></li>
+                                    <li>Arming Schedule: <strong>23:00 (11:00 PM)</strong></li>
+                                    <li>Heartbeat: <strong>Normal</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="diag-card">
+                            <div class="diag-header">
+                                <span class="diag-title">Protected Door Sensor (Zone 1)</span>
+                                <span class="diag-badge tag-green">ONLINE</span>
+                            </div>
+                            <div class="diag-body">
+                                <p>Magnetic reed switch attached to the primary retail shop entrance.</p>
+                                <ul class="diag-list">
+                                    <li>Sensor Type: <strong>Magnetic Contact</strong></li>
+                                    <li>Alarm Priority: <strong>Primary Trigger</strong></li>
+                                    <li>Sensor Loop: <strong>Normal</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="diag-card">
+                            <div class="diag-header">
+                                <span class="diag-title">CCTV Monitoring System (CAM-01)</span>
+                                <span class="diag-badge tag-blue">ONLINE</span>
+                            </div>
+                            <div class="diag-body">
+                                <p>Surveillance camera stream for visual review and evidence recording.</p>
+                                <ul class="diag-list">
+                                    <li>Video Stream: <strong>Simulated Live Stream</strong></li>
+                                    <li>Alarm Trigger: <strong>Disabled (Surveillance only)</strong></li>
+                                    <li>Resolution: <strong>1080p HD</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="diag-card">
+                            <div class="diag-header">
+                                <span class="diag-title">Notification Service</span>
+                                <span class="diag-badge tag-amber">SIMULATED / READY</span>
+                            </div>
+                            <div class="diag-body">
+                                <p>Mobile push notification dispatch for after-hours security alerts.</p>
+                                <ul class="diag-list">
+                                    <li>Channel: <strong>Mobile Push Alert</strong></li>
+                                    <li>Target: <strong>Shop Owner Phone</strong></li>
+                                    <li>Dispatch Latency: <strong>&lt; 10ms (Instant simulation)</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- College Project Disclaimer Card -->
+                    <div class="prototype-notice-card">
+                        <div class="notice-badge">ACADEMIC PROJECT PROTOTYPE</div>
+                        <h4 class="notice-title">College Engineering Demonstration Prototype</h4>
+                        <p class="notice-text">
+                            This interface represents the complete frontend software logic for a Smart Shop Security System. 
+                            In this prototype, hardware signals (door opening, closing, and camera motion) and phone push notifications 
+                            are simulated in software logic to demonstrate the exact after-hours security requirements without requiring external physical hardware connections.
+                        </p>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+
+        <!-- ==========================================
+             STATUS FOOTER / SYSTEM INFORMATION
+             ========================================== -->
+        <footer class="app-footer">
+            <div class="footer-left">
+                <span>Smart Shop Security System &bull; Frontend Prototype</span>
+            </div>
+            <div class="footer-center">
+                <span>Rule: <strong>Normal Hours (&lt; 11 PM) = Disarmed</strong> | <strong>After-Hours (&ge; 11 PM) = Armed</strong></span>
+            </div>
+            <div class="footer-right">
+                <span class="footer-status-indicator">● System Active</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Application Script -->
+    <script src="script.js"></script>
+</body>
+</html>
